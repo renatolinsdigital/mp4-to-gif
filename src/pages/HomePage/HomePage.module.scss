@@ -255,7 +255,7 @@
   color: theme.$color-on-primary;
 }
 
-.newTag {
+.tag {
   @include helpers.border(theme.$border-width-thin);
   @include helpers.mono-type;
   padding: theme.$space-3xs theme.$space-xs;
@@ -276,7 +276,7 @@
 
 .table {
   width: 100%;
-  min-width: 46rem;
+  min-width: 54rem;
   border-collapse: collapse;
   text-align: left;
 
@@ -303,17 +303,14 @@
     text-transform: uppercase;
     white-space: nowrap;
 
-    .newTag {
+    .tag {
       margin-left: theme.$space-xs;
     }
   }
 
   td {
     @include helpers.mono-type;
-  }
-
-  td:last-child {
-    width: 28%;
+    white-space: nowrap;
   }
 }
 
@@ -321,31 +318,9 @@
   background: theme.$color-primary;
   color: theme.$color-on-primary;
 
-  .newTag {
+  .tag {
     background: theme.$color-on-primary;
     color: theme.$color-primary;
     border-color: theme.$color-on-primary;
   }
-
-  .bar {
-    border-color: theme.$color-on-primary;
-    background: theme.$color-checker-a;
-  }
-
-  .barFill {
-    background: theme.$color-on-primary;
-  }
-}
-
-.bar {
-  @include helpers.border(theme.$border-width-thin);
-  display: block;
-  height: 1.125rem;
-  background: theme.$color-surface;
-}
-
-.barFill {
-  display: block;
-  height: 100%;
-  background: theme.$color-text;
 }

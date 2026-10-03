@@ -88,15 +88,6 @@
   background: theme.$color-surface-sunken;
 }
 
-.sectionInfo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: theme.$space-xs;
-  font-size: theme.$font-size-sm;
-}
-
 .toggle {
   @include helpers.border;
   display: flex;

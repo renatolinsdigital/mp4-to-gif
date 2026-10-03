@@ -19,16 +19,17 @@ test('explains the product and links to the converter', () => {
   expect(screen.getByRole('heading', { name: 'How it works' })).toBeInTheDocument();
 });
 
-test('lists every quality preset, including Ultra, in the quality ladder', () => {
+test('lists every preset and marks Standard as the default', () => {
   render(
     <MemoryRouter>
       <HomePage />
     </MemoryRouter>,
   );
   const table = screen.getByRole('table');
-  for (const label of ['Low', 'Medium', 'High', 'Very High', 'Ultra']) {
+  for (const label of ['Compact', 'Standard', 'Smooth', 'HD', 'Full HD']) {
     expect(
       within(table).getByRole('rowheader', { name: new RegExp(`^${label}`) }),
     ).toBeInTheDocument();
   }
+  expect(within(table).getByRole('rowheader', { name: 'Standard Default' })).toBeInTheDocument();
 });

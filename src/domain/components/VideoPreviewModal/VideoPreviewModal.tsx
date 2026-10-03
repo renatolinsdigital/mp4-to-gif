@@ -1,13 +1,12 @@
-import { useRef, useState } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 
 import { ConversionSettingsForm } from '@/domain/components/ConversionSettingsForm';
 import { OutputDetails } from '@/domain/components/OutputDetails';
-import { resolveSection } from '@/domain/helpers/conversionPlan';
 import type { ConversionSettings } from '@/domain/types/conversion';
 import type { QueueItem } from '@/domain/types/queue';
 import { Button } from '@/shared/components/Button';
 import { Modal } from '@/shared/components/Modal';
-import { formatBytes, formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
+import { formatBytes, formatDimensions } from '@/shared/helpers/formatters';
 
 import styles from './VideoPreviewModal.module.scss';
 
@@ -24,32 +23,15 @@ export function VideoPreviewModal({
   onCustomSettingsChange,
   onClose,
 }: VideoPreviewModalProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [playingSection, setPlayingSection] = useState(false);
   const [gifKey, setGifKey] = useState(0);
 
   const { metadata, result } = item;
   const settings = item.customSettings ?? globalSettings;
   const isLocked = item.status === 'processing';
-  const section = metadata ? resolveSection(settings.section, metadata.duration) : null;
 
-  const playSection = () => {
-    const video = videoRef.current;
-    if (!video || !section) return;
-    video.currentTime = section.start;
-    setPlayingSection(true);
-    void video.play();
-  };
-
-  const handleTimeUpdate = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    setCurrentTime(video.currentTime);
-    if (playingSection && section && video.currentTime >= section.end) {
-      video.pause();
-      setPlayingSection(false);
-    }
+  const handleTimeUpdate = (event: SyntheticEvent<HTMLVideoElement>) => {
+    setCurrentTime(event.currentTarget.currentTime);
   };
 
   return (
@@ -87,7 +69,6 @@ export function VideoPreviewModal({
           <div className={styles.videoColumn}>
             <h3 className={styles.subheading}>Source video</h3>
             <video
-              ref={videoRef}
               className={styles.video}
               src={item.sourceUrl}
               controls
@@ -96,17 +77,7 @@ export function VideoPreviewModal({
               preload="metadata"
               onTimeUpdate={handleTimeUpdate}
               onSeeked={handleTimeUpdate}
-              onPause={() => setPlayingSection(false)}
             />
-            {section && (
-              <div className={styles.sectionInfo}>
-                <p>
-                  Converting <strong>{formatSeconds(section.start)}</strong> to{' '}
-                  <strong>{formatSeconds(section.end)}</strong>
-                </p>
-                <Button label="Play this section" icon="play" size="sm" variant="secondary" onClick={playSection} />
-              </div>
-            )}
             {metadata && (
               <>
                 <h3 className={styles.subheading}>Estimated GIF</h3>

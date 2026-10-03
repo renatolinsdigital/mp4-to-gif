@@ -4,7 +4,7 @@ import { QualitySelector } from '@/domain/components/QualitySelector';
 import { QualityTuningFields } from '@/domain/components/QualityTuningFields';
 import { SectionFields } from '@/domain/components/SectionFields';
 import { maxSecondsWithinBudget, resolveFrameRate } from '@/domain/helpers/conversionPlan';
-import { QUALITY_PRESETS } from '@/domain/helpers/qualityPresets';
+import { QUALITY_PRESETS, applyPreset, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import {
   MAX_CUSTOM_WIDTH,
   MIN_CUSTOM_WIDTH,
@@ -111,15 +111,15 @@ export function ConversionSettingsForm({
     update('customWidth', result.value);
   };
 
-  const autoFps = QUALITY_PRESETS[value.quality].autoFrameRate;
+  const autoFps = QUALITY_PRESETS[value.quality].frameRate;
   const budget = memoryHint(value);
 
   return (
     <div className={styles.form}>
       <QualitySelector
         value={value.quality}
-        // A new preset starts from its own defaults, so earlier fine-tuning is cleared.
-        onChange={(quality) => onChange({ ...value, quality, tuning: {} })}
+        adjusted={isPresetAdjusted(value)}
+        onChange={(quality) => onChange(applyPreset(value, quality))}
         disabled={disabled}
       />
 

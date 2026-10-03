@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
 
 import { DEFAULT_SETTINGS } from '@/domain/helpers/settingsSchema';
@@ -7,7 +7,7 @@ import { ConversionSettingsForm } from './ConversionSettingsForm';
 
 test('renders every setting group', () => {
   render(<ConversionSettingsForm value={DEFAULT_SETTINGS} onChange={() => {}} />);
-  expect(screen.getByRole('group', { name: 'Quality' })).toBeInTheDocument();
+  expect(screen.getByRole('group', { name: 'Preset' })).toBeInTheDocument();
   expect(screen.getByRole('group', { name: 'Resolution' })).toBeInTheDocument();
   expect(screen.getByRole('group', { name: 'Frame rate' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Fine-tune quality/ })).toBeInTheDocument();
@@ -17,7 +17,10 @@ test('renders every setting group', () => {
 
 test('labels the automatic frame rate with the rate the preset will use', () => {
   render(
-    <ConversionSettingsForm value={{ ...DEFAULT_SETTINGS, quality: 'low' }} onChange={() => {}} />,
+    <ConversionSettingsForm
+      value={{ ...DEFAULT_SETTINGS, quality: 'low', frameRate: 'auto' }}
+      onChange={() => {}}
+    />,
   );
   expect(screen.getByRole('radio', { name: 'Auto 10 FPS' })).toBeChecked();
 });
@@ -44,7 +47,7 @@ test('offers Full HD as a one-tap resolution and explains the memory limit', () 
 
   rerender(
     <ConversionSettingsForm
-      value={{ ...DEFAULT_SETTINGS, width: 1920, quality: 'ultra' }}
+      value={{ ...DEFAULT_SETTINGS, width: 1920, quality: 'ultra', frameRate: 'auto' }}
       onChange={onChange}
     />,
   );
@@ -54,7 +57,13 @@ test('offers Full HD as a one-tap resolution and explains the memory limit', () 
   ).toBeInTheDocument();
 });
 
-test('picking a new quality preset clears earlier fine-tuning', () => {
+test('the default settings match the Standard preset exactly', () => {
+  render(<ConversionSettingsForm value={DEFAULT_SETTINGS} onChange={() => {}} />);
+  expect(screen.getByRole('radio', { name: 'Standard 720 px · 10 FPS' })).toBeChecked();
+  expect(screen.queryByRole('button', { name: /^Reset to/ })).not.toBeInTheDocument();
+});
+
+test('picking a preset sets its size and frame rate and clears earlier fine-tuning', () => {
   const onChange = vi.fn();
   render(
     <ConversionSettingsForm
@@ -62,8 +71,24 @@ test('picking a new quality preset clears earlier fine-tuning', () => {
       onChange={onChange}
     />,
   );
-  fireEvent.click(screen.getByRole('radio', { name: /^Ultra/ }));
-  expect(onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, quality: 'ultra', tuning: {} });
+  const presets = screen.getByRole('group', { name: 'Preset' });
+  fireEvent.click(within(presets).getByRole('radio', { name: /^Full HD/ }));
+  expect(onChange).toHaveBeenLastCalledWith({
+    ...DEFAULT_SETTINGS,
+    quality: 'ultra',
+    width: 1920,
+    frameRate: 30,
+    tuning: {},
+  });
+});
+
+test('resets a preset after its size was changed', () => {
+  const onChange = vi.fn();
+  render(
+    <ConversionSettingsForm value={{ ...DEFAULT_SETTINGS, width: 1920 }} onChange={onChange} />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Reset to Standard' }));
+  expect(onChange).toHaveBeenLastCalledWith(DEFAULT_SETTINGS);
 });
 
 test('validates the custom width before applying it', () => {

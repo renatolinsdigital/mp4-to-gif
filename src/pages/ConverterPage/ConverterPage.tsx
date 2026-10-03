@@ -27,7 +27,6 @@ export function ConverterPage() {
           <SourceVideoPanel
             key={job.id}
             job={job}
-            settings={settings}
             onRemove={converter.clearFile}
             onTimeChange={setCurrentTime}
           />

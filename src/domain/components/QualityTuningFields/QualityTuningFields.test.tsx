@@ -39,9 +39,9 @@ test('choosing the preset value again drops the override', () => {
 test('shows when settings are tuned and resets them', () => {
   const onChange = vi.fn();
   render(<QualityTuningFields quality="high" value={{ maxColors: 64 }} onChange={onChange} />);
-  expect(screen.getByText('Tuned from High')).toBeInTheDocument();
+  expect(screen.getByText('Tuned from Smooth')).toBeInTheDocument();
   openPanel();
-  fireEvent.click(screen.getByRole('button', { name: /Reset to High/ }));
+  fireEvent.click(screen.getByRole('button', { name: /Reset fine-tuning/ }));
   expect(onChange).toHaveBeenCalledWith({});
 });
 

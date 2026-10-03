@@ -20,6 +20,8 @@ test('describes the planned GIF for the given settings', () => {
   expect(screen.getByText('480×270')).toBeInTheDocument();
   expect(screen.getByText('1.0 s to 3.0 s')).toBeInTheDocument();
   expect(screen.getByText('20')).toBeInTheDocument();
+  // Standard is 720 px wide, so 480 px counts as an adjustment.
+  expect(screen.getByText('Standard (adjusted)')).toBeInTheDocument();
 });
 
 test('explains when the requested width was capped', () => {

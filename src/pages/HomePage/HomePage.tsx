@@ -5,9 +5,11 @@ import {
   QUALITY_PRESETS,
   QUALITY_PRESET_ORDER,
 } from '@/domain/helpers/qualityPresets';
+import { DEFAULT_SETTINGS } from '@/domain/helpers/settingsSchema';
 import type { DitherMode, LossyLevel } from '@/domain/types/conversion';
 import { Icon, type IconName } from '@/shared/icons';
 import { cx } from '@/shared/helpers/cx';
+import { formatBytes } from '@/shared/helpers/formatters';
 
 import styles from './HomePage.module.scss';
 
@@ -17,8 +19,8 @@ const STEPS = [
     text: 'Drop in as many MP4 files as you like, or pick them from a folder.',
   },
   {
-    title: 'Pick quality & size',
-    text: 'Five presets from Low to Ultra, widths up to Full HD. Trim a section if you only need part.',
+    title: 'Pick a preset',
+    text: 'Five presets from Compact to Full HD, or set the size and frame rate yourself. Trim a section if you only need part.',
   },
   {
     title: 'Convert & download',
@@ -35,8 +37,8 @@ const FEATURES: ReadonlyArray<{ icon: IconName; title: string; text: string; isN
   },
   {
     icon: 'sparkle',
-    title: 'Ultra quality',
-    text: 'Error-diffusion dithering and adaptive palettes for smooth gradients. Fine-tune colors, dithering, pixel skipping and lossy compression yourself.',
+    title: 'Smooth gradients',
+    text: 'The Full HD preset uses error-diffusion dithering and adaptive palettes. Fine-tune colors, dithering, pixel skipping and lossy compression yourself.',
     isNew: true,
   },
   {
@@ -62,9 +64,6 @@ const LOSSY_LABELS: Record<LossyLevel, string> = {
   medium: 'Medium',
   strong: 'Strong',
 };
-const LARGEST_RATE = Math.max(
-  ...QUALITY_PRESET_ORDER.map((p) => QUALITY_PRESETS[p].estimatedBytesPerPixel),
-);
 
 export function HomePage() {
   return (
@@ -82,7 +81,7 @@ export function HomePage() {
             <span className="visually-hidden">to</span> GIF
           </h1>
           <p className={styles.lead}>
-            Turn batches of videos into sharp GIFs, up to Full HD. Pick a quality, press convert,
+            Turn batches of videos into sharp GIFs, up to Full HD. Pick a preset, press convert,
             download. Your videos never leave your device.
           </p>
           <div className={styles.ctas}>
@@ -98,7 +97,7 @@ export function HomePage() {
         <figure className={styles.spec}>
           <figcaption className={styles.specHeader}>
             <span>Best export</span>
-            <span className={styles.specTag}>Ultra · Full HD</span>
+            <span className={styles.specTag}>Full HD preset</span>
           </figcaption>
           <div className={styles.specPreview} aria-hidden="true">
             <Icon name="film" size={56} />
@@ -122,8 +121,8 @@ export function HomePage() {
 
       <div className={styles.ticker} aria-hidden="true">
         <p>
-          Full HD 1920×1080 ✶ Ultra quality ✶ Batch convert ✶ Zero uploads ✶ Full HD 1920×1080 ✶
-          Ultra quality ✶ Batch convert ✶ Zero uploads ✶
+          Full HD 1920×1080 ✶ Five presets ✶ Batch convert ✶ Zero uploads ✶ Full HD 1920×1080 ✶ Five
+          presets ✶ Batch convert ✶ Zero uploads ✶
         </p>
       </div>
 
@@ -144,14 +143,14 @@ export function HomePage() {
         </ol>
       </section>
 
-      <section aria-labelledby="quality-ladder">
+      <section aria-labelledby="presets">
         <div className={styles.sectionHead}>
-          <h2 id="quality-ladder" className={styles.sectionTitle}>
-            Quality ladder
+          <h2 id="presets" className={styles.sectionTitle}>
+            Presets
           </h2>
           <p className={styles.sectionLead}>
-            Every step up keeps more color detail and makes bigger files. Ultra is built for HD and
-            Full HD exports.
+            Each step up is sharper and smoother, and makes bigger files. Sizes are rough figures
+            for one second of 16:9 camera footage; screen recordings come out several times smaller.
           </p>
         </div>
         <div className={styles.tableBox}>
@@ -159,25 +158,37 @@ export function HomePage() {
             <thead>
               <tr>
                 <th scope="col">Preset</th>
+                <th scope="col">Width</th>
+                <th scope="col">FPS</th>
                 <th scope="col">Colors</th>
                 <th scope="col">Palette</th>
                 <th scope="col">Dithering</th>
                 <th scope="col">Pixel skip</th>
                 <th scope="col">Lossy</th>
-                <th scope="col">Auto FPS</th>
-                <th scope="col">Relative file size</th>
+                <th scope="col">Size per second</th>
               </tr>
             </thead>
             <tbody>
               {QUALITY_PRESET_ORDER.map((key) => {
                 const preset = QUALITY_PRESETS[key];
-                const share = Math.round((preset.estimatedBytesPerPixel / LARGEST_RATE) * 100);
+                const isDefault = key === DEFAULT_SETTINGS.quality;
+                const height = Math.round((preset.width * 9) / 16);
+                const bytesPerSecond =
+                  preset.estimatedBytesPerPixel * preset.width * height * preset.frameRate;
                 return (
-                  <tr key={key} className={cx(key === 'ultra' && styles.highlightRow)}>
+                  <tr key={key} className={cx(isDefault && styles.highlightRow)}>
                     <th scope="row">
                       {preset.label}
-                      {key === 'ultra' && <span className={styles.newTag}>New</span>}
+                      {/* The space keeps the row's accessible name readable: "Standard Default". */}
+                      {isDefault && (
+                        <>
+                          {' '}
+                          <span className={styles.tag}>Default</span>
+                        </>
+                      )}
                     </th>
+                    <td>{preset.width} px</td>
+                    <td>{preset.frameRate}</td>
                     <td>{preset.maxColors}</td>
                     <td>{preset.paletteMode === 'global' ? 'Shared' : 'Adaptive'}</td>
                     <td>{DITHER_LABELS[preset.dither]}</td>
@@ -187,12 +198,7 @@ export function HomePage() {
                         : `≤ ${PIXEL_SKIP_THRESHOLDS[preset.pixelSkip]}`}
                     </td>
                     <td>{LOSSY_LABELS[preset.lossy]}</td>
-                    <td>{preset.autoFrameRate}</td>
-                    <td>
-                      <span className={styles.bar} role="img" aria-label={`${share}% of Ultra`}>
-                        <span className={styles.barFill} style={{ width: `${share}%` }} />
-                      </span>
-                    </td>
+                    <td>about {formatBytes(bytesPerSecond)}</td>
                   </tr>
                 );
               })}
@@ -213,7 +219,7 @@ export function HomePage() {
               </span>
               <h3>
                 {feature.title}
-                {feature.isNew && <span className={styles.newTag}>New</span>}
+                {feature.isNew && <span className={styles.tag}>New</span>}
               </h3>
               <p>{feature.text}</p>
             </li>

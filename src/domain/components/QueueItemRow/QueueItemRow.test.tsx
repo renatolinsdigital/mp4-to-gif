@@ -79,7 +79,7 @@ test('warns before converting when the GIF would not fit in memory', () => {
     <ul>
       <QueueItemRow
         item={item}
-        settings={{ ...DEFAULT_SETTINGS, quality: 'ultra', width: 1920 }}
+        settings={{ ...DEFAULT_SETTINGS, quality: 'ultra', frameRate: 'auto', width: 1920 }}
         {...handlers}
       />
     </ul>,

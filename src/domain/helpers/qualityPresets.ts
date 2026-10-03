@@ -1,27 +1,31 @@
 import type {
+  ConversionSettings,
   DitherMode,
   EncodingParams,
+  FrameRateOption,
   LossyLevel,
   PaletteMode,
   PaletteSize,
   PixelSkipLevel,
   QualityPreset,
   QualityTuning,
+  WidthOption,
 } from '@/domain/types/conversion';
 
 export interface QualityPresetConfig {
   label: string;
-  /** Short line shown under the preset's button. */
-  hint: string;
+  /** Who the preset is for and what it trades off, in plain words. */
   summary: string;
+  /** Output width the preset selects. */
+  width: Extract<WidthOption, number>;
+  /** Frame rate the preset selects, and what "Auto" resolves to. */
+  frameRate: Exclude<FrameRateOption, 'auto'>;
   maxColors: PaletteSize;
   colorFormat: EncodingParams['colorFormat'];
   paletteMode: PaletteMode;
   dither: DitherMode;
   pixelSkip: PixelSkipLevel;
   lossy: LossyLevel;
-  /** Frame rate used when the frame rate setting is "Automatic". */
-  autoFrameRate: number;
   /**
    * Rough bytes per output pixel per frame, used only for the size estimate. Measured on
    * handheld camera footage, about the costliest content for GIF; screen recordings and
@@ -40,72 +44,103 @@ export const QUALITY_PRESET_ORDER: readonly QualityPreset[] = [
 
 export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
   low: {
-    label: 'Low',
-    hint: '64 colors',
-    summary: 'Smallest file size. Fewer colors and a shared palette.',
+    label: 'Compact',
+    summary:
+      'Smallest files, for chat apps, email, and quick previews. Uses 64 colors, so gradients look grainy.',
+    width: 480,
+    frameRate: 10,
     maxColors: 64,
     colorFormat: 'rgb444',
     paletteMode: 'global',
     dither: 'ordered',
     pixelSkip: 'strong',
     lossy: 'strong',
-    autoFrameRate: 10,
     estimatedBytesPerPixel: 0.09,
   },
   medium: {
-    label: 'Medium',
-    hint: '128 colors',
-    summary: 'Balanced quality and size. Good default for most clips.',
+    label: 'Standard',
+    summary:
+      'The default. A clear picture at a small size, good for most clips, docs, and web pages.',
+    width: 720,
+    frameRate: 10,
     maxColors: 128,
     colorFormat: 'rgb565',
     paletteMode: 'global',
     dither: 'ordered',
     pixelSkip: 'medium',
     lossy: 'medium',
-    autoFrameRate: 15,
     estimatedBytesPerPixel: 0.15,
   },
   high: {
-    label: 'High',
-    hint: '256 colors',
-    summary: 'Better image quality. The 256-color palette adapts when the scene changes.',
+    label: 'Smooth',
+    summary:
+      'Twice the frames of Standard and the full 256 colors. Made for screen recordings, UI demos, and gameplay.',
+    width: 720,
+    frameRate: 20,
     maxColors: 256,
     colorFormat: 'rgb565',
     paletteMode: 'perFrame',
     dither: 'ordered',
     pixelSkip: 'light',
     lossy: 'light',
-    autoFrameRate: 20,
     estimatedBytesPerPixel: 0.18,
   },
   veryHigh: {
-    label: 'Very High',
-    hint: 'no pixel skip',
-    summary: 'Redraws every pixel that changes, at 24 FPS, for crisp motion and fine detail.',
+    label: 'HD',
+    summary:
+      'Sharp detail at HD size. Every pixel that changes is redrawn, so fast motion stays crisp. Large files.',
+    width: 1280,
+    frameRate: 24,
     maxColors: 256,
     colorFormat: 'rgb565',
     paletteMode: 'perFrame',
     dither: 'ordered',
     pixelSkip: 'off',
     lossy: 'medium',
-    autoFrameRate: 24,
     estimatedBytesPerPixel: 0.2,
   },
   ultra: {
-    label: 'Ultra',
-    hint: 'new',
+    label: 'Full HD',
     summary:
-      'Error-diffusion dithering, no pixel skipping, 30 FPS. Made for HD and Full HD. Largest files.',
+      'The best a GIF can look, for 1080p footage, with the smoothest gradients and motion. Largest files, so keep clips short.',
+    width: 1920,
+    frameRate: 30,
     maxColors: 256,
     colorFormat: 'rgb565',
     paletteMode: 'perFrame',
     dither: 'diffusion',
     pixelSkip: 'off',
     lossy: 'light',
-    autoFrameRate: 30,
     estimatedBytesPerPixel: 0.25,
   },
 };
+
+/** "720 px · 10 FPS": what a preset sets, shown under its name. */
+export function presetHint(quality: QualityPreset): string {
+  const { width, frameRate } = QUALITY_PRESETS[quality];
+  return `${width} px · ${frameRate} FPS`;
+}
+
+/** Picking a preset sets its size and frame rate and clears earlier fine-tuning. */
+export function applyPreset(
+  settings: ConversionSettings,
+  quality: QualityPreset,
+): ConversionSettings {
+  const { width, frameRate } = QUALITY_PRESETS[quality];
+  return { ...settings, quality, width, frameRate, tuning: {} };
+}
+
+/** True once the size, frame rate, or fine-tuning no longer match the chosen preset. */
+export function isPresetAdjusted(
+  settings: Pick<ConversionSettings, 'quality' | 'tuning' | 'width' | 'frameRate'>,
+): boolean {
+  const preset = QUALITY_PRESETS[settings.quality];
+  return (
+    settings.width !== preset.width ||
+    (settings.frameRate !== 'auto' && settings.frameRate !== preset.frameRate) ||
+    isTuned(settings.quality, settings.tuning)
+  );
+}
 
 /**
  * How far, in RGB distance, a pixel may flicker from frame to frame (video noise) and still

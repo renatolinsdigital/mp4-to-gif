@@ -8,8 +8,8 @@ export const MAX_CUSTOM_WIDTH = 3840;
 export const DEFAULT_SETTINGS: ConversionSettings = {
   quality: 'medium',
   tuning: {},
-  frameRate: 'auto',
-  width: 480,
+  frameRate: 10,
+  width: 720,
   customWidth: 640,
   loop: 'infinite',
   section: { mode: 'full' },

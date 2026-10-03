@@ -6,19 +6,17 @@ import { makeGifResult, makeQueueItem } from '@/tests/fixtures';
 
 import { VideoPreviewModal } from './VideoPreviewModal';
 
-test('shows the video, the selected section and the estimated GIF', () => {
+test('shows the video and the estimated GIF', () => {
   const item = makeQueueItem({ file: new File([], 'trailer.mp4') });
   render(
     <VideoPreviewModal
       item={item}
-      globalSettings={{ ...DEFAULT_SETTINGS, section: { mode: 'range', start: 2, end: 6 } }}
+      globalSettings={DEFAULT_SETTINGS}
       onCustomSettingsChange={() => {}}
       onClose={() => {}}
     />,
   );
   expect(screen.getByRole('dialog', { name: 'trailer.mp4' })).toBeInTheDocument();
-  expect(screen.getByText('2.0 s')).toBeInTheDocument();
-  expect(screen.getByText('6.0 s')).toBeInTheDocument();
   expect(screen.getByText('Estimated GIF')).toBeInTheDocument();
 });
 

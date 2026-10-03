@@ -153,7 +153,7 @@ export function QualityTuningFields({
           {tuned && (
             <div>
               <Button
-                label={`Reset to ${preset.label}`}
+                label="Reset fine-tuning"
                 icon="refresh"
                 size="sm"
                 variant="secondary"

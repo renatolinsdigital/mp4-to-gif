@@ -1,5 +1,5 @@
 import { buildConversionPlan, estimateGifSize } from '@/domain/helpers/conversionPlan';
-import { QUALITY_PRESETS, isTuned } from '@/domain/helpers/qualityPresets';
+import { QUALITY_PRESETS, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import type { ConversionSettings, VideoMetadata } from '@/domain/types/conversion';
 import { formatBytes, formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
 
@@ -22,8 +22,8 @@ export function OutputDetails({ settings, metadata }: OutputDetailsProps) {
     ['Frame rate', `${plan.fps} FPS`],
     ['Frames', String(plan.frameTimes.length)],
     [
-      'Quality',
-      `${QUALITY_PRESETS[settings.quality].label}${isTuned(settings.quality, settings.tuning) ? ' (tuned)' : ''}`,
+      'Preset',
+      `${QUALITY_PRESETS[settings.quality].label}${isPresetAdjusted(settings) ? ' (adjusted)' : ''}`,
     ],
     ['Loop', settings.loop === 'infinite' ? 'Infinite' : 'Once'],
     ['Estimated size', `about ${formatBytes(estimateGifSize(plan))}`],

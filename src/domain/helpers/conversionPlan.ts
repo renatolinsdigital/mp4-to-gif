@@ -19,7 +19,7 @@ export function resolveFrameRate(
   settings: Pick<ConversionSettings, 'frameRate' | 'quality'>,
 ): number {
   return settings.frameRate === 'auto'
-    ? QUALITY_PRESETS[settings.quality].autoFrameRate
+    ? QUALITY_PRESETS[settings.quality].frameRate
     : settings.frameRate;
 }
 

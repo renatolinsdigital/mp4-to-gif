@@ -19,8 +19,30 @@
 
 .summary {
   @include helpers.border;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xs;
   padding: theme.$space-xs theme.$space-sm;
   background: theme.$color-surface-sunken;
   font-size: theme.$font-size-xs;
   font-weight: theme.$font-weight-semibold;
+}
+
+.adjusted {
+  color: theme.$color-text-muted;
+}
+
+// Reads as a link, matching global `a` styles.
+.reset {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: theme.$color-text;
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+
+  &:disabled {
+    color: theme.$color-text-subtle;
+  }
 }

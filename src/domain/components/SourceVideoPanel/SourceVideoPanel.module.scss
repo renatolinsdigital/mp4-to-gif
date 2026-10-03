@@ -55,11 +55,3 @@
   flex-wrap: wrap;
   gap: theme.$space-2xs theme.$space-md;
 }
-
-.section {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: theme.$space-xs theme.$space-sm;
-  font-size: theme.$font-size-sm;
-}
