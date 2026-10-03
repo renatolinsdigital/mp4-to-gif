@@ -11,8 +11,11 @@ import {
 } from '@/domain/helpers/conversionPlan';
 import { QUALITY_PRESETS, applyPreset, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import {
+  MAX_CUSTOM_FRAME_RATE,
   MAX_CUSTOM_WIDTH,
+  MIN_CUSTOM_FRAME_RATE,
   MIN_CUSTOM_WIDTH,
+  validateCustomFrameRate,
   validateCustomWidth,
 } from '@/domain/helpers/settingsSchema';
 import type {
@@ -35,7 +38,7 @@ interface ConversionSettingsFormProps {
   disabled?: boolean;
 }
 
-const FRAME_RATES: readonly FrameRateOption[] = ['auto', 10, 15, 20, 24, 30];
+const FRAME_RATES: readonly FrameRateOption[] = ['auto', 10, 15, 20, 24, 30, 'custom'];
 const WIDTHS: ReadonlyArray<{ value: WidthOption; label: string; hint: string }> = [
   { value: 320, label: '320', hint: 'px' },
   { value: 480, label: '480', hint: 'px' },
@@ -55,7 +58,22 @@ const LOOP_OPTIONS = [
 const LARGE_WIDTH = 1280;
 
 function parseFrameRate(raw: string): FrameRateOption {
-  return raw === 'auto' ? 'auto' : (Number(raw) as FrameRateOption);
+  return raw === 'auto' || raw === 'custom' ? raw : (Number(raw) as FrameRateOption);
+}
+
+function frameRateOption(rate: FrameRateOption, autoFps: number) {
+  switch (rate) {
+    case 'auto':
+      return { value: rate, label: 'Auto', hint: `${autoFps} FPS` };
+    case 'custom':
+      return {
+        value: rate,
+        label: 'Custom',
+        hint: `${MIN_CUSTOM_FRAME_RATE}–${MAX_CUSTOM_FRAME_RATE}`,
+      };
+    default:
+      return { value: String(rate), label: String(rate), hint: 'FPS' };
+  }
 }
 
 function parseWidth(raw: string): WidthOption {
@@ -101,6 +119,8 @@ export function ConversionSettingsForm({
 }: ConversionSettingsFormProps) {
   const [customWidthDraft, setCustomWidthDraft] = useState(String(value.customWidth));
   const [customWidthError, setCustomWidthError] = useState<string | null>(null);
+  const [customFrameRateDraft, setCustomFrameRateDraft] = useState(String(value.customFrameRate));
+  const [customFrameRateError, setCustomFrameRateError] = useState<string | null>(null);
 
   const update = <K extends keyof ConversionSettings>(key: K, next: ConversionSettings[K]) =>
     onChange({ ...value, [key]: next });
@@ -114,6 +134,17 @@ export function ConversionSettingsForm({
     }
     setCustomWidthError(null);
     update('customWidth', result.value);
+  };
+
+  const changeCustomFrameRate = (raw: string) => {
+    setCustomFrameRateDraft(raw);
+    const result = validateCustomFrameRate(raw);
+    if ('error' in result) {
+      setCustomFrameRateError(result.error);
+      return;
+    }
+    setCustomFrameRateError(null);
+    update('customFrameRate', result.value);
   };
 
   const autoFps = QUALITY_PRESETS[value.quality].frameRate;
@@ -159,18 +190,32 @@ export function ConversionSettingsForm({
         </div>
       </div>
 
-      <SegmentedControl
-        legend="Frame rate"
-        options={FRAME_RATES.map((rate) => ({
-          value: String(rate),
-          label: rate === 'auto' ? 'Auto' : String(rate),
-          hint: rate === 'auto' ? `${autoFps} FPS` : 'FPS',
-        }))}
-        value={String(value.frameRate)}
-        disabled={disabled}
-        compact
-        onChange={(raw) => update('frameRate', parseFrameRate(raw))}
-      />
+      <div className={styles.group}>
+        <SegmentedControl
+          legend="Frame rate"
+          options={FRAME_RATES.map((rate) => frameRateOption(rate, autoFps))}
+          value={String(value.frameRate)}
+          disabled={disabled}
+          compact
+          onChange={(raw) => update('frameRate', parseFrameRate(raw))}
+        />
+        {value.frameRate === 'custom' && (
+          <TextField
+            label="Custom frame rate"
+            type="number"
+            inputMode="numeric"
+            min={MIN_CUSTOM_FRAME_RATE}
+            max={MAX_CUSTOM_FRAME_RATE}
+            step={1}
+            suffix="FPS"
+            size="sm"
+            value={customFrameRateDraft}
+            error={customFrameRateError ?? undefined}
+            disabled={disabled}
+            onChange={changeCustomFrameRate}
+          />
+        )}
+      </div>
 
       <QualityTuningFields
         quality={value.quality}

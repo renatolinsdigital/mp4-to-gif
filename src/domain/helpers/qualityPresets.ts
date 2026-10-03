@@ -19,7 +19,7 @@ export interface QualityPresetConfig {
   /** Output width the preset selects. */
   width: Extract<WidthOption, number>;
   /** Frame rate the preset selects, and what "Auto" resolves to. */
-  frameRate: Exclude<FrameRateOption, 'auto'>;
+  frameRate: Exclude<FrameRateOption, 'auto' | 'custom'>;
   maxColors: PaletteSize;
   colorFormat: EncodingParams['colorFormat'];
   paletteMode: PaletteMode;
@@ -121,12 +121,16 @@ export function applyPreset(
 
 /** True once the size, frame rate, or fine-tuning no longer match the chosen preset. */
 export function isPresetAdjusted(
-  settings: Pick<ConversionSettings, 'quality' | 'tuning' | 'width' | 'frameRate'>,
+  settings: Pick<
+    ConversionSettings,
+    'quality' | 'tuning' | 'width' | 'frameRate' | 'customFrameRate'
+  >,
 ): boolean {
   const preset = QUALITY_PRESETS[settings.quality];
+  const frameRate = settings.frameRate === 'custom' ? settings.customFrameRate : settings.frameRate;
   return (
     settings.width !== preset.width ||
-    (settings.frameRate !== 'auto' && settings.frameRate !== preset.frameRate) ||
+    (frameRate !== 'auto' && frameRate !== preset.frameRate) ||
     isTuned(settings.quality, settings.tuning)
   );
 }

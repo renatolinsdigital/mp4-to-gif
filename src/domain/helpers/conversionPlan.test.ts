@@ -49,12 +49,18 @@ describe('resolveOutputDimensions', () => {
 
 describe('resolveFrameRate', () => {
   test('automatic follows the quality preset', () => {
-    expect(resolveFrameRate({ frameRate: 'auto', quality: 'low' })).toBe(10);
-    expect(resolveFrameRate({ frameRate: 'auto', quality: 'veryHigh' })).toBe(24);
+    expect(resolveFrameRate({ frameRate: 'auto', customFrameRate: 5, quality: 'low' })).toBe(10);
+    expect(resolveFrameRate({ frameRate: 'auto', customFrameRate: 5, quality: 'veryHigh' })).toBe(
+      24,
+    );
   });
 
   test('explicit rates win', () => {
-    expect(resolveFrameRate({ frameRate: 30, quality: 'low' })).toBe(30);
+    expect(resolveFrameRate({ frameRate: 30, customFrameRate: 5, quality: 'low' })).toBe(30);
+  });
+
+  test('custom uses the typed rate', () => {
+    expect(resolveFrameRate({ frameRate: 'custom', customFrameRate: 5, quality: 'low' })).toBe(5);
   });
 });
 

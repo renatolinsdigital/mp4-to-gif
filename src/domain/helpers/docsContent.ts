@@ -8,7 +8,9 @@ import {
 } from '@/domain/helpers/qualityPresets';
 import {
   DEFAULT_SETTINGS,
+  MAX_CUSTOM_FRAME_RATE,
   MAX_CUSTOM_WIDTH,
+  MIN_CUSTOM_FRAME_RATE,
   MIN_CUSTOM_WIDTH,
   SPEED_STEPS,
 } from '@/domain/helpers/settingsSchema';
@@ -236,12 +238,22 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
       {
         id: 'frame-rate',
         title: 'Frame rate (FPS)',
-        keywords: ['fps', 'frames per second', 'smooth', 'choppy', 'auto', 'delay', 'timing'],
+        keywords: [
+          'fps',
+          'frames per second',
+          'smooth',
+          'choppy',
+          'auto',
+          'custom',
+          'delay',
+          'timing',
+        ],
         summary: 'How many frames per second (FPS) are captured from the video.',
         body: [
           'More frames per second means smoother motion. Frame rate never changes how fast the GIF plays (that’s Speed’s job): a lower rate looks choppier, not slower.',
           'File size grows roughly with frame rate: 20 FPS is about twice 10 FPS. Still or slow content gains little from a high rate, since frames that barely change are cheap to store.',
-          'Auto uses the preset’s rate. GIF stores delays in hundredths of a second, so 30 FPS plays as 30, 30 and 40 millisecond delays in turn, keeping the total length exact.',
+          `Auto uses the preset’s rate. Custom accepts any whole number from ${MIN_CUSTOM_FRAME_RATE} to ${MAX_CUSTOM_FRAME_RATE} FPS; very low rates suit slideshow-style GIFs.`,
+          'GIF stores delays in hundredths of a second, so 30 FPS plays as 30, 30 and 40 millisecond delays in turn, keeping the total length exact.',
         ],
         impact: [
           { aspect: 'Look', effect: 'Smoother motion' },

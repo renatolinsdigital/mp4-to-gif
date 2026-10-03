@@ -4,6 +4,8 @@ import type { ConversionSettings } from '@/domain/types/conversion';
 
 export const MIN_CUSTOM_WIDTH = 16;
 export const MAX_CUSTOM_WIDTH = 3840;
+export const MIN_CUSTOM_FRAME_RATE = 1;
+export const MAX_CUSTOM_FRAME_RATE = 30;
 
 /**
  * Speeds offered by the speed slider. A list rather than a linear range so slow motion gets
@@ -15,6 +17,7 @@ export const DEFAULT_SETTINGS: ConversionSettings = {
   quality: 'medium',
   tuning: {},
   frameRate: 10,
+  customFrameRate: 12,
   width: 720,
   customWidth: 640,
   loop: 'infinite',
@@ -27,6 +30,12 @@ export const customWidthSchema = z.coerce
   .int('Use a whole number of pixels.')
   .min(MIN_CUSTOM_WIDTH, `Width must be at least ${MIN_CUSTOM_WIDTH} px.`)
   .max(MAX_CUSTOM_WIDTH, `Width can be at most ${MAX_CUSTOM_WIDTH} px.`);
+
+export const customFrameRateSchema = z.coerce
+  .number({ error: 'Enter a frame rate in FPS.' })
+  .int('Use a whole number of frames per second.')
+  .min(MIN_CUSTOM_FRAME_RATE, `Frame rate must be at least ${MIN_CUSTOM_FRAME_RATE} FPS.`)
+  .max(MAX_CUSTOM_FRAME_RATE, `Frame rate can be at most ${MAX_CUSTOM_FRAME_RATE} FPS.`);
 
 const secondsSchema = z.coerce
   .number({ error: 'Enter a time in seconds.' })
@@ -43,4 +52,10 @@ export function validateCustomWidth(input: string): { value: number } | { error:
   const parsed = customWidthSchema.safeParse(input);
   if (parsed.success) return { value: parsed.data };
   return { error: parsed.error.issues[0]?.message ?? 'Invalid width.' };
+}
+
+export function validateCustomFrameRate(input: string): { value: number } | { error: string } {
+  const parsed = customFrameRateSchema.safeParse(input);
+  if (parsed.success) return { value: parsed.data };
+  return { error: parsed.error.issues[0]?.message ?? 'Invalid frame rate.' };
 }

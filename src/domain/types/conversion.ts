@@ -1,6 +1,6 @@
 export type QualityPreset = 'low' | 'medium' | 'high' | 'veryHigh' | 'ultra';
 
-export type FrameRateOption = 'auto' | 10 | 15 | 20 | 24 | 30;
+export type FrameRateOption = 'auto' | 10 | 15 | 20 | 24 | 30 | 'custom';
 
 /** 1280 is HD (720p) and 1920 is Full HD (1080p) for 16:9 video. */
 export type WidthOption = 'original' | 320 | 480 | 720 | 1280 | 1920 | 'custom';
@@ -37,6 +37,8 @@ export interface ConversionSettings {
   quality: QualityPreset;
   tuning: QualityTuning;
   frameRate: FrameRateOption;
+  /** Frames per second used when `frameRate` is `custom`. */
+  customFrameRate: number;
   width: WidthOption;
   customWidth: number;
   loop: LoopMode;

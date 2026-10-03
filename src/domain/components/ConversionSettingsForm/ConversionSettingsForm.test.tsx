@@ -126,3 +126,35 @@ test('validates the custom width before applying it', () => {
     customWidth: 600,
   });
 });
+
+test('validates the custom frame rate before applying it', () => {
+  const onChange = vi.fn();
+  const { rerender } = render(
+    <ConversionSettingsForm value={DEFAULT_SETTINGS} onChange={onChange} />,
+  );
+  expect(screen.queryByLabelText(/Custom frame rate/)).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('radio', { name: 'Custom 1–30' }));
+  expect(onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, frameRate: 'custom' });
+
+  rerender(
+    <ConversionSettingsForm
+      value={{ ...DEFAULT_SETTINGS, frameRate: 'custom' }}
+      onChange={onChange}
+    />,
+  );
+  const input = screen.getByLabelText(/Custom frame rate/);
+
+  fireEvent.change(input, { target: { value: '31' } });
+  expect(screen.getByRole('alert')).toHaveTextContent('Frame rate can be at most 30 FPS.');
+
+  fireEvent.change(input, { target: { value: '0' } });
+  expect(screen.getByRole('alert')).toHaveTextContent('Frame rate must be at least 1 FPS.');
+
+  fireEvent.change(input, { target: { value: '5' } });
+  expect(onChange).toHaveBeenLastCalledWith({
+    ...DEFAULT_SETTINGS,
+    frameRate: 'custom',
+    customFrameRate: 5,
+  });
+});

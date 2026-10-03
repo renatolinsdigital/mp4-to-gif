@@ -12,11 +12,11 @@ export const MIN_SECTION_LENGTH = 0.1;
 const END_EPSILON = 0.001;
 
 export function resolveFrameRate(
-  settings: Pick<ConversionSettings, 'frameRate' | 'quality'>,
+  settings: Pick<ConversionSettings, 'frameRate' | 'customFrameRate' | 'quality'>,
 ): number {
-  return settings.frameRate === 'auto'
-    ? QUALITY_PRESETS[settings.quality].frameRate
-    : settings.frameRate;
+  if (settings.frameRate === 'auto') return QUALITY_PRESETS[settings.quality].frameRate;
+  if (settings.frameRate === 'custom') return settings.customFrameRate;
+  return settings.frameRate;
 }
 
 export function resolveTargetWidth(
