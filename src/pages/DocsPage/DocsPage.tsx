@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { Link } from 'react-router';
 
 import { DocsEntryCard } from '@/domain/components/DocsEntryCard';
 import { DOCS_SECTIONS } from '@/domain/helpers/docsContent';
@@ -9,7 +8,6 @@ import { SearchField } from '@/shared/components/SearchField';
 import { pluralize } from '@/shared/helpers/formatters';
 import { useFocusShortcut } from '@/shared/hooks/useFocusShortcut';
 import { useScrollToHash } from '@/shared/hooks/useScrollToHash';
-import { Icon } from '@/shared/icons';
 
 import styles from './DocsPage.module.scss';
 
@@ -38,9 +36,6 @@ export function DocsPage() {
   return (
     <div className={styles.page}>
       <header className={styles.intro}>
-        <p className={styles.eyebrow}>
-          <Icon name="book" size={16} /> Docs
-        </p>
         <h1 className={styles.title}>Know your GIF</h1>
         <p className={styles.lead}>
           Every preset, setting and number in the converter, explained in plain words: what it does,
@@ -69,7 +64,7 @@ export function DocsPage() {
           <h2 className={styles.emptyTitle}>Nothing matches “{query.trim()}”</h2>
           <p>
             Try a shorter word, or one of the settings’ names, like “palette”, “lossy” or
-            “resolution”. Still stuck? Ask on the <Link to="/about">About page</Link>.
+            “resolution”.
           </p>
           <button type="button" className={styles.clearButton} onClick={() => setQuery('')}>
             Show all topics

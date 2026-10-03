@@ -23,6 +23,11 @@ export function formatSeconds(seconds: number): string {
   return `${(Math.round(seconds * 10) / 10).toFixed(1)} s`;
 }
 
+/** Playback speed multiplier: 2 -> "2×", 0.25 -> "0.25×". */
+export function formatSpeed(speed: number): string {
+  return `${speed}×`;
+}
+
 export function formatDimensions(width: number, height: number): string {
   return `${width}×${height}`;
 }

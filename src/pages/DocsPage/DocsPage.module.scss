@@ -23,15 +23,6 @@ $header-clearance: 6rem;
   max-width: 56rem;
 }
 
-.eyebrow {
-  @include helpers.inverted;
-  @include helpers.label-type;
-  display: inline-flex;
-  align-items: center;
-  gap: theme.$space-xs;
-  padding: theme.$space-xs theme.$space-sm;
-}
-
 .title {
   @include helpers.display-type;
   font-size: theme.$font-size-display;

@@ -92,7 +92,7 @@ Business logic is isolated in custom hooks (see `react.md`). Pages stay declarat
 
 - `/` → Home. Explains the project clearly.
 - `/converter` (or equivalent primary feature route) → the main functional page.
-- `/about` → contact page with a form.
+- `/docs` → searchable reference for presets and settings.
 
 Each page is a component inside `/pages`, mapped through a central router file, with smooth transitions between routes. Routes are lazy-loaded (see `performance.md`).
 
@@ -188,7 +188,7 @@ The application must work correctly on mobile, tablet, and desktop, using the mi
 
 ## Forms
 
-The contact/about form (and any form generally) requires:
+Any form requires:
 
 - Name, email, message (or the fields relevant to the specific form).
 - Client-side validation with accessible error messaging.

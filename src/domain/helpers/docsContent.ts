@@ -10,6 +10,7 @@ import {
   DEFAULT_SETTINGS,
   MAX_CUSTOM_WIDTH,
   MIN_CUSTOM_WIDTH,
+  SPEED_STEPS,
 } from '@/domain/helpers/settingsSchema';
 import type {
   DitherMode,
@@ -18,7 +19,7 @@ import type {
   QualityPreset,
 } from '@/domain/types/conversion';
 import type { DocsEntry, DocsSection } from '@/domain/types/docs';
-import { formatBytes } from '@/shared/helpers/formatters';
+import { formatBytes, formatSpeed } from '@/shared/helpers/formatters';
 
 // Every number below is read from the same constants the encoder uses, so the docs can't
 // drift from what the converter actually does.
@@ -93,10 +94,10 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         title: 'How conversion works',
         keywords: ['steps', 'process', 'pipeline'],
         summary:
-          'Your browser plays the video, captures frames at the chosen frame rate, reduces each one to a small palette of colors, and writes them into a GIF.',
+          'Your browser captures frames from the video, reduces each one to a small palette of colors, and writes them into a GIF.',
         body: [
-          'Each frame is captured from the video, scaled down to the output size with a high-quality (Lanczos) filter, then matched to a palette of at most 256 colors. Only the parts of a frame that changed since the previous one are stored, and the result is compressed.',
-          'All of this happens in a background thread, so the page stays responsive while it works. Bigger sizes and higher frame rates mean more pixels to process, so they take longer.',
+          'Each frame is scaled to the output size with a high-quality (Lanczos) filter, then matched to a palette of up to 256 colors. Only what changed since the previous frame is stored, and the result is compressed.',
+          'The work runs in a background thread, so the page stays responsive. More pixels (a bigger size or a higher frame rate) means a longer wait.',
         ],
         related: ['privacy', 'gif-format', 'one-video'],
       },
@@ -104,21 +105,20 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         id: 'privacy',
         title: 'Runs locally (zero uploads)',
         keywords: ['upload', 'server', 'offline', 'private', 'account', 'security'],
-        summary: 'Videos are decoded and encoded inside your browser. Nothing is uploaded.',
+        summary: 'Videos are decoded and encoded in your browser. Nothing is uploaded.',
         body: [
-          'Your files are read from your device, converted on your device, and handed back as downloads. There is no server doing the work and no account to create.',
-          'The only network request the site makes is sending the contact form on the About page, and only when you submit it.',
+          'Files are read, converted and downloaded on your device. No server does the work and there is no account.',
         ],
-        tip: 'Because everything runs on your machine, a faster computer converts faster, and closing the tab stops the conversion.',
+        tip: 'Your machine does the work: a faster computer converts faster, and closing the tab stops the conversion.',
       },
       {
         id: 'supported-videos',
         title: 'Supported videos',
         keywords: ['mp4', 'm4v', 'h264', 'h.264', 'codec', 'format', 'input', 'hevc', 'h.265'],
-        summary: 'Any MP4 (or M4V) your browser can play can be converted.',
+        summary: 'Any MP4 (or M4V) your browser can play.',
         body: [
-          'Conversion uses the video decoder built into your browser. Almost every MP4 uses H.264, which every modern browser plays. Some browsers can’t decode HEVC (H.265), which some phones record by default. Those files show an explanation as soon as you open them.',
-          'Audio is ignored, since GIFs have no sound.',
+          'Conversion uses your browser’s built-in video decoder. Nearly every MP4 is H.264, which all modern browsers play. HEVC (H.265), the default on some phones, isn’t supported everywhere; those files show an explanation as soon as you open them.',
+          'Audio is ignored: GIFs have no sound.',
         ],
         related: ['unsupported-encoding', 'file-size-limit'],
       },
@@ -127,11 +127,11 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         title: 'What a GIF can and can’t do',
         keywords: ['graphics interchange format', 'limits', 'audio', 'sound', 'why big'],
         summary:
-          'A GIF (Graphics Interchange Format) image holds at most 256 colors per frame, has no sound, and stores timing in hundredths of a second.',
+          'A GIF (Graphics Interchange Format) holds at most 256 colors per frame, has no sound, and times frames in hundredths of a second.',
         body: [
-          'Video formats like MP4 store millions of colors and only describe how the picture changes over time. A GIF has to describe every frame with a small palette, so the same clip is usually much larger as a GIF than as an MP4.',
-          'That limit is why every setting here is a trade between three things: how the GIF looks, how big the file is, and how long it takes to make.',
-          'GIFs play everywhere without a player, autoplay in chat apps and docs, and loop by themselves. That is what you’re paying for in file size.',
+          'MP4 stores millions of colors and mostly records what changes over time. A GIF must describe every frame with a small palette, so the same clip is usually much larger as a GIF.',
+          'That’s why every setting trades between three things: how the GIF looks, how big it is, and how long it takes to make.',
+          'In return, GIFs play everywhere without a player, autoplay in chat apps and docs, and loop on their own.',
         ],
         related: ['colors-per-palette', 'dithering', 'frame-rate'],
       },
@@ -139,11 +139,11 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         id: 'one-video',
         title: 'One video at a time',
         keywords: ['single', 'file', 'multiple', 'several', 'another video', 'remove', 'replace'],
-        summary: 'The converter works on one MP4 at a time.',
+        summary: 'The converter handles one MP4 at a time.',
         body: [
-          'Drop a video or choose one, and it opens with its settings below it. If you drop several files, the first MP4 is used.',
-          'To convert a different video, use Remove on the current one and add the next. Your settings stay as they are, so a series of clips can share the same preset.',
-          'A running conversion keeps going if you visit another page of the site, but closing or reloading the tab stops it.',
+          'Drop or choose a video and its settings open below it. If you drop several files, the first MP4 is used.',
+          'To switch videos, Remove the current one and add the next. Settings are kept, so a series of clips can share a preset.',
+          'A conversion keeps running while you visit other pages of the site. Closing or reloading the tab stops it.',
         ],
         related: ['downloads', 'conversion-status'],
       },
@@ -153,9 +153,9 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['save', 'name', 'rename', 'replay', 'download gif'],
         summary: 'Download GIF saves the result, named after its video.',
         body: [
-          'The GIF is named after the video, so “my-clip.mp4” becomes “my-clip.gif”. Characters that aren’t allowed in file names are replaced.',
-          'Replay restarts the preview from the first frame, handy for a GIF set to play once.',
-          'The GIF lives in the page’s memory until you download it. Removing the video, reloading or closing the tab discards it.',
+          '“my-clip.mp4” becomes “my-clip.gif”. Characters not allowed in file names are replaced.',
+          'Replay restarts the preview from the first frame, useful for a GIF set to play once.',
+          'Until you download it, the GIF lives only in the page’s memory. Removing the video, reloading or closing the tab discards it.',
         ],
         related: ['gif-panel'],
       },
@@ -164,18 +164,18 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
   {
     id: 'presets',
     title: 'Presets',
-    intro: `Five starting points, from smallest to best looking. Standard is the default.`,
+    intro: 'Five starting points, from smallest file to best look. Standard is the default.',
     entries: [
       {
         id: 'presets-overview',
         title: 'How presets work',
         keywords: ['quality', 'adjusted', 'tuned', 'auto', 'reset'],
         summary:
-          'A preset sets the resolution, the frame rate, and the five fine-tune quality settings in one click.',
+          'One click sets the resolution, the frame rate and all five fine-tune quality settings.',
         body: [
-          'Picking a preset sets its resolution and frame rate and clears any fine-tuning you did before. You can then change anything you like.',
-          'Once your settings differ from the preset, the Output summary under Settings shows the preset as “adjusted”, and the fine-tune panel shows a “Tuned from …” badge. Reset fine-tuning puts the quality settings back to the preset’s.',
-          'Frame rate “Auto” always follows the current preset, so switching presets also switches the frame rate.',
+          'Picking a preset also clears earlier fine-tuning. From there, change anything you like.',
+          'Once your settings differ, the Output summary marks the preset “adjusted” and the fine-tune panel shows a “Tuned from …” badge. Reset fine-tuning restores the preset’s quality settings.',
+          'Frame rate “Auto” follows the current preset, so switching presets switches the frame rate too.',
         ],
         related: ['choosing-a-preset', 'frame-rate', 'colors-per-palette'],
       },
@@ -184,13 +184,13 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         id: 'choosing-a-preset',
         title: 'Which preset should I pick?',
         keywords: ['recommend', 'best', 'which', 'help', 'choose', 'advice'],
-        summary: 'Start from where the GIF will be shown, then from what is in the video.',
+        summary: 'Start from where the GIF will be shown, then look at what’s in the video.',
         body: [
-          'Sharing in chat or email with a size limit: Compact. Docs, README files and web pages: Standard. Screen recordings and UI demos: Smooth, which doubles the frame rate so cursor movement and scrolling look fluid.',
-          'Camera footage with skies, faces or gradients: HD or Full HD. Their adaptive palettes and stronger dithering hide banding, at the cost of much larger files.',
-          'Long clips at high presets can grow to hundreds of megabytes. Trim a section, lower the frame rate, or drop one size step before reaching for Compact.',
+          'Chat or email with a size limit: Compact. Docs, README files and web pages: Standard. Screen recordings and UI demos: Smooth, whose doubled frame rate keeps cursors and scrolling fluid.',
+          'Camera footage with skies, faces or gradients: HD or Full HD. Adaptive palettes and stronger dithering hide banding, but files are much larger.',
+          'Long clips at high presets can reach hundreds of megabytes. Before dropping to Compact, trim a section, lower the frame rate, or go one size down.',
         ],
-        tip: 'Convert a 3 to 5 second section first. Its size tells you roughly what the full clip will weigh.',
+        tip: 'Convert a 3 to 5 second section first. Its size hints at what the full clip will weigh.',
         related: ['section', 'memory-limit'],
       },
     ],
@@ -221,10 +221,10 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         ],
         summary: 'The width of the GIF in pixels. The height follows the video’s aspect ratio.',
         body: [
-          'HD is 1280 pixels wide (1280×720 for 16:9 video) and Full HD is 1920 (1920×1080). Original keeps each video’s own width.',
+          'HD is 1280 pixels wide (1280×720 for 16:9 video) and Full HD is 1920 (1920×1080). Original keeps the video’s own width.',
           `Custom accepts any whole number from ${MIN_CUSTOM_WIDTH} to ${MAX_CUSTOM_WIDTH} pixels.`,
-          'Videos are never upscaled. If you ask for 1920 and the video is 1280 wide, the GIF stays 1280 wide and the Output summary shows “capped at source width”. Upscaling would only make the file bigger without adding detail.',
-          'File size grows with the number of pixels, which is width times height. Doubling the width roughly quadruples the file.',
+          'Videos are never upscaled, since that adds bytes but no detail. Ask for 1920 on a 1280-wide video and the GIF stays 1280 wide, with “capped at source width” in the Output summary.',
+          'File size follows the pixel count (width × height), so doubling the width roughly quadruples the file.',
         ],
         impact: [
           { aspect: 'Look', effect: 'Sharper when wider' },
@@ -236,21 +236,12 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
       {
         id: 'frame-rate',
         title: 'Frame rate (FPS)',
-        keywords: [
-          'fps',
-          'frames per second',
-          'smooth',
-          'choppy',
-          'auto',
-          'delay',
-          'speed',
-          'timing',
-        ],
+        keywords: ['fps', 'frames per second', 'smooth', 'choppy', 'auto', 'delay', 'timing'],
         summary: 'How many frames per second (FPS) are captured from the video.',
         body: [
-          'Higher frame rates make motion smoother. The GIF plays at the same speed as the video whatever the frame rate, so a lower rate looks choppier, never slower.',
-          'File size grows roughly in step with frame rate: 20 FPS is about twice the size of 10 FPS. Still or slow content gains little from a high rate, because frames that barely change are cheap to store.',
-          'Auto uses the current preset’s rate. GIF stores each frame’s delay in hundredths of a second, so 30 FPS is played as delays of 30, 30 and 40 milliseconds in turn, which keeps the total length exact.',
+          'More frames per second means smoother motion. Frame rate never changes how fast the GIF plays (that’s Speed’s job): a lower rate looks choppier, not slower.',
+          'File size grows roughly with frame rate: 20 FPS is about twice 10 FPS. Still or slow content gains little from a high rate, since frames that barely change are cheap to store.',
+          'Auto uses the preset’s rate. GIF stores delays in hundredths of a second, so 30 FPS plays as 30, 30 and 40 millisecond delays in turn, keeping the total length exact.',
         ],
         impact: [
           { aspect: 'Look', effect: 'Smoother motion' },
@@ -263,10 +254,10 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         id: 'loop',
         title: 'Loop',
         keywords: ['repeat', 'once', 'infinite', 'forever', 'play'],
-        summary: 'Whether the GIF repeats forever or plays once and stops on its last frame.',
+        summary: 'Repeat forever, or play once and stop on the last frame.',
         body: [
-          'Infinite is the usual choice and the default. Once suits a GIF that ends on a result, like a finished form or a final screen.',
-          'Some apps and sites loop every GIF regardless of this setting.',
+          'Infinite is the default and the usual choice. Once suits a GIF that ends on a result, like a finished form or a final screen.',
+          'Some apps and sites loop every GIF regardless.',
         ],
         impact: [{ aspect: 'File size', effect: 'No effect' }],
       },
@@ -284,18 +275,53 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           'current frame',
           'entire video',
         ],
-        summary: 'Convert the entire video, or only the part between a start and an end time.',
+        summary: 'Convert the whole video, or only the part between a start and an end time.',
         body: [
-          'Times are in seconds, with one decimal. The end must come after the start, and an end past the video’s length is capped at its last frame.',
-          'Pause the video where you want and use “Set start to current frame” or “Set end to current frame” to copy the playback position. It’s the quickest way to pick an exact moment.',
-          'A shorter section is the single most effective way to get a smaller GIF, and it doesn’t cost any quality.',
+          'Times are in seconds with one decimal. The end must come after the start; an end past the video’s length is capped at its last frame.',
+          'To pick an exact moment, pause the video there and use “Set start to current frame” or “Set end to current frame”.',
+          'A shorter section is the most effective way to shrink a GIF, and it costs no quality.',
         ],
         impact: [
           { aspect: 'Look', effect: 'No effect' },
           { aspect: 'File size', effect: 'Shorter is smaller' },
           { aspect: 'Speed', effect: 'Shorter is faster' },
         ],
-        related: ['memory-limit', 'frame-rate'],
+        related: ['speed', 'memory-limit', 'frame-rate'],
+      },
+      {
+        id: 'speed',
+        title: 'Speed',
+        keywords: [
+          'fast forward',
+          'faster',
+          'slower',
+          'slow motion',
+          'slow-mo',
+          'timelapse',
+          'accelerate',
+          'playback',
+          '2x',
+          'duration',
+        ],
+        summary: 'Plays the video faster or slower in the GIF.',
+        body: [
+          'At 2×, a one-minute video becomes a 30 second GIF. At 0.5×, a 10 second section becomes 20 seconds of slow motion. Speed applies to the chosen section, and the Output summary shows the resulting GIF length.',
+          'Frame rate stays the same at any speed. Speeding up captures moments further apart, so a fast speed at a low frame rate skips motion (raise the frame rate if it looks jumpy). Slowing down past the video’s own frame rate repeats frames: almost free to store, but it looks stepped.',
+          'Why not just show each frame for less time? Browsers play frames under 20 milliseconds much slower than asked, so fast GIFs would end up slow. Speed changes which moments are captured instead.',
+        ],
+        facts: [
+          {
+            aspect: 'Range',
+            effect: `${formatSpeed(SPEED_STEPS[0] as number)} to ${formatSpeed(SPEED_STEPS[SPEED_STEPS.length - 1] as number)}`,
+          },
+          { aspect: 'Default', effect: formatSpeed(DEFAULT_SETTINGS.speed) },
+        ],
+        impact: [
+          { aspect: 'Look', effect: 'Faster skips more motion' },
+          { aspect: 'File size', effect: 'Faster is smaller' },
+          { aspect: 'Conversion time', effect: 'Faster is quicker' },
+        ],
+        related: ['section', 'frame-rate', 'memory-limit'],
       },
     ],
   },
@@ -303,7 +329,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
     id: 'fine-tune',
     title: 'Fine-tune quality',
     intro:
-      'The advanced controls under “Fine-tune quality”. Each one starts at the preset’s value; change one and only that setting moves away from the preset.',
+      'The advanced controls under “Fine-tune quality”. Each starts at the preset’s value, and changing one moves only that setting away from the preset.',
     entries: [
       {
         id: 'colors-per-palette',
@@ -322,9 +348,9 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         ],
         summary: 'How many different colors each frame may use: 64, 128 or 256.',
         body: [
-          'A GIF frame can only use colors from its palette. The converter picks the colors that best represent the frame (quantization). More colors mean truer skin tones and smoother skies.',
-          'One slot is kept for transparency, which marks pixels that didn’t change since the previous frame. So 256 means 255 visible colors plus that one.',
-          'Fewer colors make smaller files and look fine on flat content like screenshots, diagrams and UI. On camera footage, 64 colors show visible steps (banding) in gradients, which dithering then has to hide. The Compact preset also picks its colors from a coarser color range, which saves a little more.',
+          'A frame can only use colors from its palette. The converter picks the colors that best represent the frame (quantization). More colors give truer skin tones and smoother skies.',
+          'One slot is reserved for transparency, which marks pixels unchanged since the previous frame. So 256 means 255 visible colors plus that one.',
+          'Fewer colors make smaller files and suit flat content like screenshots, diagrams and UI. On camera footage, 64 colors show steps in gradients (banding) that dithering then has to hide. Compact also picks from a coarser color range, saving a little more.',
         ],
         facts: [
           { aspect: '64', effect: 'Flat, smallest' },
@@ -356,12 +382,12 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           'pattern',
         ],
         summary:
-          'Mixes nearby palette colors in a fine pattern so the eye sees colors the palette doesn’t have.',
+          'Mixes palette colors in a fine pattern so the eye sees colors the palette doesn’t have.',
         body: [
-          'Without dithering, a smooth gradient becomes visible bands of flat color. Dithering trades those bands for fine texture, much like print halftones.',
-          'Off: flat color areas and the smallest files. Best for screenshots, slides and cartoons. Gradients will band.',
-          'Ordered (Bayer): a regular, fixed pattern. Because the pattern doesn’t move between frames, still areas stay still and compress well. A good all-rounder, used by most presets.',
-          'Diffusion (Floyd–Steinberg): spreads each pixel’s color error onto its neighbors. Gives the smoothest gradients and skin tones, but the texture changes a little every frame, which makes the largest files. Used by Full HD.',
+          'Without it, a smooth gradient turns into bands of flat color. Dithering trades the bands for fine texture, like print halftones.',
+          'Off: flat color areas, smallest files, but gradients band. Best for screenshots, slides and cartoons.',
+          'Ordered (Bayer): a fixed, regular pattern. It doesn’t move between frames, so still areas stay still and compress well. A good all-rounder, used by most presets.',
+          'Diffusion (Floyd–Steinberg): passes each pixel’s color error on to its neighbors. Smoothest gradients and skin tones, but the texture shifts every frame, making the largest files. Used by Full HD.',
         ],
         facts: [
           { aspect: 'Off', effect: 'Bands, smallest' },
@@ -373,7 +399,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           { aspect: 'File size', effect: 'Bigger' },
           { aspect: 'Speed', effect: 'Diffusion is slower' },
         ],
-        tip: 'Seeing banding in a sky or a dark background? Turn dithering up before adding colors.',
+        tip: 'Banding in a sky or a dark background? Raise dithering before adding colors.',
         related: ['colors-per-palette', 'lossy'],
       },
       {
@@ -390,12 +416,11 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           'cut',
           'fade',
         ],
-        summary:
-          'Whether the whole GIF uses one set of colors, or the colors adapt as the video changes.',
+        summary: 'One set of colors for the whole GIF, or colors that adapt as the video changes.',
         body: [
-          'Shared builds one palette from 8 frames spread evenly across the clip and uses it for every frame. Colors stay perfectly stable and files are smaller, but a clip that changes scenes, say from a beach to a night shot, has to share colors between both.',
-          'Adaptive keeps the current palette while it still fits, and builds a new one when the picture’s colors change, for example at a cut or a fade. Each scene gets colors chosen for it.',
-          'Rebuilding only on real changes, rather than every frame, keeps colors from flickering and lets still areas be skipped.',
+          'Shared: one palette, built from 8 frames spread across the clip, used for every frame. Colors stay perfectly stable and files are smaller, but a clip that cuts from a beach to a night shot must split its colors between both.',
+          'Adaptive: keeps the current palette while it fits, and builds a new one when the colors change, such as at a cut or a fade. Each scene gets its own colors.',
+          'Rebuilding only on real changes, not every frame, prevents color flicker and lets still areas be skipped.',
         ],
         facts: [
           { aspect: 'Shared', effect: 'One palette, smaller' },
@@ -424,11 +449,11 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           '≤',
         ],
         summary:
-          'Pixels that look the same as in the previous frame are not stored again. This sets how different “the same” may be.',
+          'Pixels that look the same as in the previous frame aren’t stored again. This sets how different “the same” can be.',
         body: [
-          'Real video is noisy: even a still wall flickers a little from frame to frame. Storing that flicker costs a lot of bytes and shows nothing useful.',
-          'Each level is a maximum color distance, on the 0 to 255 scale of the red, green and blue (RGB) channels. A pixel that moved less than that since the last frame is left as it was. The numbers in the table on the Home page (like “≤ 12”) are these distances.',
-          'Anything that really changes and stays changed is always redrawn, so moving objects never leave ghosts or trails. Off still skips pixels that are exactly identical, which loses nothing.',
+          'Real video is noisy: even a still wall flickers slightly between frames. Storing that flicker costs bytes and shows nothing useful.',
+          'Each level is a maximum color distance on the 0 to 255 scale of the red, green and blue (RGB) channels. A pixel that changed less than that keeps its previous value. The numbers on the Home page (like “≤ 12”) are these distances.',
+          'Real, lasting changes are always redrawn, so moving objects never leave ghosts or trails. Off still skips exact repeats, which loses nothing.',
         ],
         facts: (['off', 'light', 'medium', 'strong'] as const).map((level) => ({
           aspect: LEVEL_NAMES[level],
@@ -439,7 +464,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           { aspect: 'File size', effect: 'Smaller when stronger' },
           { aspect: 'Speed', effect: 'No effect' },
         ],
-        tip: 'If a slow fade or a subtle shadow looks like it moves in steps, lower this setting.',
+        tip: 'If a slow fade or a soft shadow moves in steps, lower this setting.',
         related: ['lossy', 'frame-rate'],
       },
       {
@@ -455,11 +480,12 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           'artifacts',
           'streaks',
         ],
-        summary: 'Lets the compressor reuse a nearly identical color where that shrinks the file.',
+        summary:
+          'Lets the compressor swap in a nearly identical color where that shrinks the file.',
         body: [
-          'GIF compression works by finding repeated runs of pixels. Lossy compression allows a pixel to be nudged slightly toward a color that continues a run, much like the “--lossy” option of the gifsicle tool.',
-          'Each level is the largest color distance a pixel may move. Neighboring pixels are kept balanced around the true color, so the loss shows as fine grain, never as streaks or smears.',
-          'It saves the most on dithered and noisy footage, and little on flat colors where runs are already long.',
+          'GIF compression shrinks repeated runs of pixels. Lossy mode nudges a pixel slightly toward a color that extends a run, like the gifsicle tool’s “--lossy” option.',
+          'Each level is the furthest a pixel’s color may move. Neighboring pixels stay balanced around the true color, so the loss shows as fine grain, never streaks or smears.',
+          'Biggest savings on dithered and noisy footage; little on flat colors, whose runs are already long.',
         ],
         facts: (['off', 'light', 'medium', 'strong'] as const).map((level) => ({
           aspect: LEVEL_NAMES[level],
@@ -487,22 +513,22 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         title: 'Output summary',
         keywords: ['dimensions', 'frames', 'capped', 'adjusted', 'details', 'summary', 'output'],
         summary:
-          'The Output summary under Settings describes the GIF your settings will make, before you convert.',
+          'Under Settings, describes the GIF your current settings will make, before you convert.',
         body: [
-          'Dimensions: the GIF’s width×height. “Capped at source width” means the chosen width was larger than the video, so the video’s own width is used.',
-          'Section: the part of the video that will be converted. Frame rate and Frames: how many frames per second, and how many frames in total.',
-          'Preset: the chosen preset, marked “adjusted” when your settings differ from it. Loop: whether it repeats or plays once.',
+          'Dimensions: width×height. “Capped at source width” means the chosen width exceeded the video’s, so the video’s own width is used.',
+          'Section: the part being converted. Speed and GIF length: how fast it plays and how long the GIF lasts. Frame rate and Frames: frames per second and the total count.',
+          'Preset: marked “adjusted” when your settings differ from it. Loop: repeats or plays once.',
         ],
-        related: ['resolution', 'presets-overview', 'loop'],
+        related: ['resolution', 'speed', 'presets-overview', 'loop'],
       },
       {
         id: 'best-export',
         title: 'Best export: 1920×1080, 256/frame, up to 30',
         keywords: ['home', 'card', 'full hd', 'max', 'maximum', 'highest'],
-        summary: 'The card on the Home page sums up the most the Full HD preset can produce.',
+        summary: 'The Home page card sums up the most the Full HD preset can produce.',
         body: [
-          '1920×1080 is Full HD for 16:9 video. 256/frame means each frame can have its own palette of up to 256 colors, the most a GIF allows. Up to 30 is the highest frame rate offered.',
-          'Smaller videos are never upscaled, so a 720p video stays 1280×720 even with the Full HD preset.',
+          '1920×1080: Full HD for 16:9 video. 256/frame: each frame can have its own palette of up to 256 colors, the GIF maximum. Up to 30: the highest frame rate offered.',
+          'Smaller videos aren’t upscaled, so a 720p video stays 1280×720 even with Full HD.',
         ],
         related: ['preset-full-hd', 'colors-per-palette', 'memory-limit'],
       },
@@ -510,10 +536,10 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         id: 'gif-panel',
         title: 'The GIF panel',
         keywords: ['result', 'size', 'dimensions', 'frames', 'loop', 'preview'],
-        summary: 'Shown under Settings once the GIF is ready, with its real figures.',
+        summary: 'Appears under Settings when the GIF is ready, with its real figures.',
         body: [
-          'Size is the GIF’s file size. Dimensions, Frames and Loop describe the GIF as it was made.',
-          'Change a setting and press Convert again to make a new version. It replaces the previous one, so download the GIF first if you want to keep both.',
+          'Size is the file size. Dimensions, Frames and Loop describe the GIF as it was made.',
+          'Change a setting and press Convert again for a new version. It replaces the current one, so download first to keep both.',
         ],
         related: ['downloads', 'output-details'],
       },
@@ -523,9 +549,9 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['reading', 'converting', 'progress', 'cancel', 'error', 'convert again'],
         summary: 'What the Settings panel shows while a video loads and converts.',
         body: [
-          '“Reading the video…”: the video was just added and its length, size and preview frame are being loaded. Convert to GIF becomes available once that finishes.',
-          '“Converting…”: a progress bar shows how far along it is. Cancel stops it; if you were converting again, the previous GIF is kept.',
-          'If something goes wrong, the message under Settings says why and what to change.',
+          '“Reading the video…”: loading the new video’s length, size and preview frame. Convert to GIF unlocks when it’s done.',
+          '“Converting…”: a progress bar tracks the work. Cancel stops it; when converting again, the previous GIF is kept.',
+          'If something fails, the message under Settings says why and what to change.',
         ],
         related: ['one-video', 'unsupported-encoding', 'conversion-failed'],
       },
@@ -551,18 +577,18 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
           'insufficient',
         ],
         summary:
-          'The finished GIF is held in the tab’s memory until you download it, so very long, large clips are refused up front.',
+          'The finished GIF stays in the tab’s memory until downloaded, so very long, large clips are refused up front.',
         body: [
-          'The limit depends on the number of pixels across all frames: width × height × frames per second × seconds. Above it, the conversion is refused with a message instead of crashing the tab halfway through.',
-          'At 1280 pixels wide and above, the settings show how many seconds fit at the current size and frame rate.',
-          'To fit a longer clip, trim a section, lower the frame rate, or choose a smaller width.',
+          'The limit is the total pixels across all frames: width × height × frames per second × seconds of GIF. Above it, the conversion is refused with a message rather than crashing the tab halfway.',
+          'From 1280 pixels wide up, the settings show how many seconds fit at the current size, frame rate and speed.',
+          'To fit more: trim a section, lower the frame rate, pick a smaller width, or speed up. At 2× the GIF is half as long, so twice the video fits; slow motion fits less.',
         ],
         facts: [
           { aspect: 'Full HD, 30 FPS', effect: `up to ${fullHdSeconds} s` },
           { aspect: 'HD, 24 FPS', effect: `up to ${hdSeconds} s` },
           { aspect: '720 px, 10 FPS', effect: `up to ${standardSeconds} s` },
         ],
-        related: ['section', 'resolution', 'frame-rate'],
+        related: ['section', 'speed', 'resolution', 'frame-rate'],
       },
       {
         id: 'file-size-limit',
@@ -570,7 +596,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['2 gb', 'too large', 'big file', 'maximum'],
         summary: `Source videos can be up to ${formatBytes(MAX_FILE_SIZE_BYTES)}.`,
         body: [
-          'Larger files are marked with an error as soon as they are added, because the browser has to hold the whole file in memory to read it.',
+          'Larger files are flagged as soon as they’re added, because the browser must hold the whole file in memory to read it.',
         ],
       },
       {
@@ -579,7 +605,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['hevc', 'h.265', 'h265', 'codec', 'iphone', 'cannot decode', 'won’t play'],
         summary: 'The MP4 uses a video codec your browser can’t decode.',
         body: [
-          'This is most often HEVC (H.265), which some phones record by default and some browsers can’t play. Re-export the video as H.264, or try another browser.',
+          'Usually HEVC (H.265), the default on some phones, which some browsers can’t play. Re-export the video as H.264, or try another browser.',
         ],
         related: ['supported-videos'],
       },
@@ -589,7 +615,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['not mp4', 'broken', 'incomplete', 'damaged', 'invalid'],
         summary: 'The file isn’t a real MP4, or it is damaged or incomplete.',
         body: [
-          'Files are checked by their contents, not just their name, so a renamed file of another type is caught. An incomplete download or an interrupted recording can also fail to read. Try playing the file in your video player first.',
+          'Files are checked by content, not name, so a renamed file of another type is caught. Incomplete downloads and interrupted recordings can also fail. Try playing the file in your video player first.',
         ],
       },
       {
@@ -598,7 +624,7 @@ export const DOCS_SECTIONS: readonly DocsSection[] = [
         keywords: ['failed', 'error', 'went wrong', 'retry', 'try again'],
         summary: 'Something went wrong while creating the GIF.',
         body: [
-          'Press Convert to GIF again first. If it fails again, lower the resolution or frame rate, or trim a shorter section. Large settings on a device with little memory are the usual cause.',
+          'Press Convert to GIF again. If it still fails, lower the resolution or frame rate, or trim a shorter section: large settings on a low-memory device are the usual cause.',
         ],
         related: ['memory-limit', 'conversion-status'],
       },

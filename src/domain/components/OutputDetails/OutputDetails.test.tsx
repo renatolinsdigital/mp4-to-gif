@@ -24,6 +24,17 @@ test('describes the planned GIF for the given settings', () => {
   expect(screen.getByText('Standard (adjusted)')).toBeInTheDocument();
 });
 
+test('shows the speed and how long the GIF will play', () => {
+  render(
+    <OutputDetails
+      settings={{ ...DEFAULT_SETTINGS, speed: 2 }}
+      metadata={{ duration: 60, width: 1920, height: 1080 }}
+    />,
+  );
+  expect(screen.getByText('2×')).toBeInTheDocument();
+  expect(screen.getByText('30.0 s')).toBeInTheDocument();
+});
+
 test('explains when the requested width was capped', () => {
   render(
     <OutputDetails

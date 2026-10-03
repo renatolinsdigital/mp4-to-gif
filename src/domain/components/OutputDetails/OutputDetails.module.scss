@@ -1,11 +1,22 @@
 @use '@/global-styles/theme';
 @use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
 
+// The summary always has 8 rows, so these column counts divide it evenly and every
+// line is full: 4 lines of 2 on mobile, 2 of 4 on tablet, 1 of 8 on desktop.
 .list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   border-top: theme.$border-width-thin solid theme.$color-border;
   border-left: theme.$border-width-thin solid theme.$color-border;
+
+  @include responsive.tablet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @include responsive.desktop {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
 }
 
 .row {
@@ -23,6 +34,7 @@
   dd {
     @include helpers.mono-type;
     margin: 0;
+    overflow-wrap: anywhere;
     font-size: theme.$font-size-sm;
     font-weight: theme.$font-weight-bold;
   }

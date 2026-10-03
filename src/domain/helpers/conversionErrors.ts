@@ -16,7 +16,7 @@ export const CONVERSION_ERROR_MESSAGES: Record<ConversionErrorCode, string> = {
     'Something went wrong while creating the GIF. Try again or use lower settings.',
   'file-too-large': 'This file is larger than the 2 GB limit for in-browser conversion.',
   'insufficient-memory':
-    'Not enough memory to build this GIF. Try a smaller width, a lower frame rate, or a shorter section.',
+    'Not enough memory to build this GIF. Try a smaller width, a lower frame rate, a shorter section, or a faster speed.',
   cancelled: 'Conversion was cancelled.',
 };
 

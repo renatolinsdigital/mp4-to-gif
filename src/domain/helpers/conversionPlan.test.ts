@@ -7,6 +7,7 @@ import {
   buildConversionPlan,
   buildFrameTimeline,
   exceedsMemoryBudget,
+  gifDurationSeconds,
   maxSecondsWithinBudget,
   pickSampleTimes,
   resolveFrameRate,
@@ -75,23 +76,39 @@ describe('resolveSection', () => {
 
 describe('buildFrameTimeline', () => {
   test('spaces frames evenly from the start', () => {
-    const { times } = buildFrameTimeline(1, 2, 10);
+    const { times } = buildFrameTimeline({ start: 1, end: 2, fps: 10 });
     expect(times).toHaveLength(10);
     expect(times[0]).toBe(1);
     expect(times[9]).toBeCloseTo(1.9);
   });
 
   test('distributes rounding so delays add up to the real duration', () => {
-    const { delaysMs } = buildFrameTimeline(0, 1, 30);
+    const { delaysMs } = buildFrameTimeline({ start: 0, end: 1, fps: 30 });
     expect(delaysMs).toHaveLength(30);
     expect(delaysMs.reduce((sum, delay) => sum + delay, 0)).toBe(1000);
     expect(new Set(delaysMs)).toEqual(new Set([30, 40]));
   });
 
   test('always produces at least one frame inside the video', () => {
-    const { times } = buildFrameTimeline(0, 0.01, 10);
+    const { times } = buildFrameTimeline({ start: 0, end: 0.01, fps: 10 });
     expect(times).toHaveLength(1);
     expect(times[0]).toBeLessThan(0.01);
+  });
+
+  test('speeding up captures moments further apart and keeps the frame delays', () => {
+    const { times, delaysMs } = buildFrameTimeline({ start: 0, end: 2, fps: 10, speed: 2 });
+    expect(times).toHaveLength(10);
+    expect(times[1]).toBeCloseTo(0.2);
+    expect(times[9]).toBeCloseTo(1.8);
+    expect(new Set(delaysMs)).toEqual(new Set([100]));
+  });
+
+  test('slowing down captures moments closer together, making more frames', () => {
+    const { times, delaysMs } = buildFrameTimeline({ start: 4, end: 5, fps: 10, speed: 0.5 });
+    expect(times).toHaveLength(20);
+    expect(times[1]).toBeCloseTo(4.05);
+    expect(times[19]).toBeCloseTo(4.95);
+    expect(delaysMs.reduce((sum, delay) => sum + delay, 0)).toBe(2000);
   });
 });
 
@@ -109,6 +126,24 @@ describe('buildConversionPlan', () => {
     expect(plan.output).toEqual({ width: 320, height: 180 });
     expect(plan.frameTimes).toHaveLength(30);
     expect(plan.loop).toBe('infinite');
+    expect(plan.speed).toBe(1);
+  });
+
+  test('a one-minute video at 2× becomes a 30 second GIF', () => {
+    const plan = buildConversionPlan({ ...DEFAULT_SETTINGS, speed: 2 }, { duration: 60, ...HD });
+    expect(gifDurationSeconds(plan)).toBe(30);
+    expect(plan.frameTimes).toHaveLength(300);
+    expect(plan.frameTimes[plan.frameTimes.length - 1]).toBeCloseTo(59.8);
+  });
+
+  test('a 10 second section at 0.5× becomes a 20 second GIF', () => {
+    const plan = buildConversionPlan(
+      { ...DEFAULT_SETTINGS, speed: 0.5, section: { mode: 'range', start: 5, end: 15 } },
+      { duration: 60, ...HD },
+    );
+    expect(gifDurationSeconds(plan)).toBe(20);
+    expect(plan.frameTimes[0]).toBe(5);
+    expect(plan.frameTimes[plan.frameTimes.length - 1]).toBeCloseTo(14.95);
   });
 });
 
@@ -126,6 +161,12 @@ test('maxSecondsWithinBudget gives the longest Full HD clip that fits in memory'
   // 1.2 billion pixel-frames / (1920 × 1080 × 30 FPS) ≈ 19.3 s.
   expect(maxSecondsWithinBudget({ width: 1920, height: 1080 }, 30)).toBe(19);
   expect(maxSecondsWithinBudget({ width: 480, height: 270 }, 15)).toBeGreaterThan(600);
+});
+
+test('speeding up fits more video in memory, slowing down fits less', () => {
+  const fullHd = { width: 1920, height: 1080 };
+  expect(maxSecondsWithinBudget(fullHd, 30, 2)).toBe(38);
+  expect(maxSecondsWithinBudget(fullHd, 30, 0.5)).toBe(9);
 });
 
 describe('quality tuning', () => {

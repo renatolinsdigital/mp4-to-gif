@@ -41,6 +41,8 @@ export interface ConversionSettings {
   customWidth: number;
   loop: LoopMode;
   section: Section;
+  /** Playback speed multiplier: 2 turns a 60 s section into a 30 s GIF, 0.5 into 120 s. */
+  speed: number;
 }
 
 /** Encoder parameters resolved from a preset plus its tuning. */
@@ -81,8 +83,11 @@ export interface ConversionPlan {
   /** True when the requested width was larger than the source and got capped. */
   widthCapped: boolean;
   fps: number;
+  /** Section bounds, in seconds of source video. */
   start: number;
   end: number;
+  speed: number;
+  /** Source video timestamps to capture, one per GIF frame. */
   frameTimes: number[];
   /** Per-frame delay in milliseconds, always a multiple of 10 (GIF stores centiseconds). */
   frameDelaysMs: number[];

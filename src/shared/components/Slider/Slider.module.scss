@@ -1,0 +1,144 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+// The scale marks are as wide as the thumb, so each one sits under the thumb's center
+// at that position.
+$thumb-size: 1.5rem;
+$track-height: 0.75rem;
+
+// The global reset's `*` selector doesn't reach range-input pseudo-elements.
+@mixin thumb {
+  @include helpers.border(theme.$border-width-thin);
+  box-sizing: border-box;
+  width: $thumb-size;
+  height: $thumb-size;
+  border-radius: theme.$radius-sm;
+  background: theme.$color-primary;
+  box-shadow: theme.$shadow-sm;
+  cursor: grab;
+  transition: transform theme.$duration-fast theme.$easing-standard;
+}
+
+@mixin track {
+  @include helpers.border(theme.$border-width-thin);
+  box-sizing: border-box;
+  height: $track-height;
+  border-radius: theme.$radius-sm;
+  background: theme.$color-surface-sunken;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xs;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-xs;
+}
+
+.label {
+  @include helpers.label-type;
+  font-size: theme.$font-size-xs;
+}
+
+.value {
+  @include helpers.mono-type;
+  @include helpers.inverted;
+  padding: theme.$space-3xs theme.$space-xs;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+}
+
+.input {
+  width: 100%;
+  min-height: theme.$touch-target;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+
+  &::-moz-range-track {
+    @include track;
+  }
+
+  &::-webkit-slider-thumb {
+    @include thumb;
+    appearance: none;
+    // Centers the thumb on the track; WebKit aligns it to the track's top edge.
+    margin-top: calc(($track-height - $thumb-size) / 2 - theme.$border-width-thin);
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: translate(1px, 1px);
+  }
+
+  &:active::-moz-range-thumb {
+    cursor: grabbing;
+    transform: translate(1px, 1px);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    @include helpers.focus-ring;
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    @include helpers.focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: calc(theme.$space-2xs * -1);
+}
+
+.mark {
+  @include helpers.mono-type;
+  display: flex;
+  justify-content: center;
+  width: $thumb-size;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-2xs;
+  font-weight: theme.$font-weight-semibold;
+  white-space: nowrap;
+
+  // Labels wider than the thumb would spill past the track's ends.
+  &:first-child {
+    justify-content: flex-start;
+  }
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+}
+
+.hint {
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-semibold;
+}
+
+.disabled {
+  opacity: 0.6;
+}

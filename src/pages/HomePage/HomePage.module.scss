@@ -19,11 +19,14 @@
   gap: theme.$space-2xl;
   padding-top: theme.$space-md;
 
-  // Two fixed columns on desktop so the text can't push the spec card into a far corner.
+  // On desktop the text column sets the row height and the spec card is stretched to it, so
+  // the card's top and bottom line up with the title and the buttons. The text column grows
+  // with the row so wide screens don't open a gap between the two.
   @include responsive.desktop {
     display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: theme.$space-3xl;
+    grid-template-columns: minmax(0, clamp(34rem, 50%, 40rem)) minmax(0, 1fr);
+    align-items: stretch;
+    gap: theme.$space-2xl;
     padding-top: theme.$space-xl;
   }
 }
@@ -37,53 +40,70 @@
   min-width: 0;
 }
 
-.eyebrow {
-  @include helpers.inverted;
-  @include helpers.label-type;
-  display: inline-flex;
-  align-items: center;
-  gap: theme.$space-xs;
-  padding: theme.$space-xs theme.$space-sm;
-}
-
 .title {
   @include helpers.display-type;
-  font-size: clamp(3.5rem, 11vw, 9.5rem);
+  font-size: clamp(3rem, 9vw, 7rem);
   line-height: 0.88;
+
+  // Drops the space above the capitals, so the top of "MP4" is the top of the hero row.
+  @include responsive.desktop {
+    text-box: trim-start cap alphabetic;
+  }
 }
 
+// A square exactly one cap height tall, sitting on the baseline, so its top and bottom edges
+// line up with the capitals of "MP4". The em value is the fallback where `cap` is unsupported.
 .arrow {
   @include helpers.border;
-  display: inline-block;
-  padding: 0 0.08em;
+  display: inline-grid;
+  place-items: center;
+  width: 0.72em;
+  width: 1cap;
+  aspect-ratio: 1;
+  margin-left: 0.08em;
   background: theme.$color-primary;
   color: theme.$color-on-primary;
+
+  svg {
+    width: 62%;
+    height: 62%;
+  }
 }
 
 .lead {
-  max-width: 40ch;
-  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  max-width: 44ch;
+  font-size: clamp(theme.$font-size-lg, 2vw, theme.$font-size-2xl);
   font-weight: theme.$font-weight-medium;
   line-height: 1.45;
 }
 
+// On mobile the buttons stack and fill the column's width; from tablet up they sit side by
+// side at their own widths.
 .ctas {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  align-self: stretch;
   gap: theme.$space-md;
   margin-top: theme.$space-xs;
+
+  @include responsive.tablet {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 
+// Grows with the viewport, reaching full size around 1330px, so both buttons still fit on
+// one row in the narrower text column of small desktops.
 .cta {
   @include helpers.border;
   display: inline-flex;
   align-items: center;
-  gap: theme.$space-xs;
-  min-height: 3.5rem;
-  padding: 0 theme.$space-lg;
+  justify-content: center;
+  gap: theme.$space-sm;
+  min-height: clamp(3.5rem, 0.5rem + 4.5vw, 4.25rem);
+  padding: 0 clamp(theme.$space-lg, 3vw - 0.5rem, theme.$space-xl);
   background: theme.$color-surface;
   color: theme.$color-text;
-  font-size: theme.$font-size-md;
+  font-size: clamp(theme.$font-size-md, 0.5rem + 0.75vw, theme.$font-size-lg);
   font-weight: theme.$font-weight-extrabold;
   letter-spacing: 0.06em;
   text-decoration: none;
@@ -103,11 +123,34 @@
   color: theme.$color-on-primary;
 }
 
-.spec {
-  @include helpers.card-surface(theme.$shadow-lg);
+// Everything in the spec card except the preview: header strip, facts row and borders.
+// Approximate: an error only nudges the preview's ratio, never the card's height.
+$spec-chrome-height: calc(5.75rem + 3 * theme.$border-width);
+
+// On desktop this is a size container: it adds nothing to the row height, gets stretched to
+// the height the text column sets, and the card sizes itself from that height.
+.heroVisual {
   flex: 1 1 20rem;
   min-width: 0;
+
+  @include responsive.desktop {
+    display: flex;
+    justify-content: flex-end;
+    container-type: size;
+  }
+}
+
+.spec {
+  @include helpers.card-surface(theme.$shadow-lg);
+  min-width: 0;
   margin: 0;
+
+  // Fills the row's height; the width follows so the preview stays close to 16:9.
+  @include responsive.desktop {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, calc((100cqh - $spec-chrome-height) * 16 / 9 + 2 * theme.$border-width));
+  }
 }
 
 .specHeader {
@@ -140,6 +183,12 @@
   place-items: center;
   aspect-ratio: 16 / 9;
   color: theme.$color-text;
+
+  @include responsive.desktop {
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
 }
 
 .specFacts {
@@ -270,10 +319,6 @@
   color: theme.$color-text;
 }
 
-.featureIconNew {
-  background: theme.$color-primary;
-  color: theme.$color-on-primary;
-}
 
 .tag {
   @include helpers.border(theme.$border-width-thin);

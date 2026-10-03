@@ -5,6 +5,12 @@ import type { ConversionSettings } from '@/domain/types/conversion';
 export const MIN_CUSTOM_WIDTH = 16;
 export const MAX_CUSTOM_WIDTH = 3840;
 
+/**
+ * Speeds offered by the speed slider. A list rather than a linear range so slow motion gets
+ * as much of the track as fast forward, with 1× near the middle.
+ */
+export const SPEED_STEPS: readonly number[] = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+
 export const DEFAULT_SETTINGS: ConversionSettings = {
   quality: 'medium',
   tuning: {},
@@ -13,6 +19,7 @@ export const DEFAULT_SETTINGS: ConversionSettings = {
   customWidth: 640,
   loop: 'infinite',
   section: { mode: 'full' },
+  speed: 1,
 };
 
 export const customWidthSchema = z.coerce

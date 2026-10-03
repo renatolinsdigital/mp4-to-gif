@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { formatBytes, formatDuration, formatSeconds, pluralize } from './formatters';
+import { formatBytes, formatDuration, formatSeconds, formatSpeed, pluralize } from './formatters';
 
 test('formatBytes picks a readable unit', () => {
   expect(formatBytes(0)).toBe('0 B');
@@ -21,4 +21,9 @@ test('formatSeconds shows one decimal', () => {
 test('pluralize', () => {
   expect(pluralize(1, 'file')).toBe('1 file');
   expect(pluralize(3, 'file')).toBe('3 files');
+});
+
+test('formatSpeed shows the multiplier', () => {
+  expect(formatSpeed(2)).toBe('2×');
+  expect(formatSpeed(0.25)).toBe('0.25×');
 });

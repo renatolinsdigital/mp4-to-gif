@@ -69,8 +69,8 @@ export function SettingsPanel({
             <Icon name="alert" size={16} />
             <span>
               Too long for this size in browser memory. Trim it to{' '}
-              {maxSecondsWithinBudget(plan.output, plan.fps)} s, or lower the frame rate or
-              resolution.
+              {maxSecondsWithinBudget(plan.output, plan.fps, plan.speed)} s, or lower the frame rate
+              or resolution.
             </span>
           </p>
         )}

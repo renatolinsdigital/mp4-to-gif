@@ -49,8 +49,8 @@ h6 {
   overflow-wrap: break-word;
 }
 
-ul[role='list'],
-ol[role='list'] {
+// :where() keeps this at zero specificity so a component class can set its own padding.
+:where(ul[role='list'], ol[role='list']) {
   list-style: none;
   padding: 0;
 }

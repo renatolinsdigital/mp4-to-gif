@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true },
   { to: '/converter', label: 'Converter', end: false },
   { to: '/docs', label: 'Docs', end: false },
-  { to: '/about', label: 'About', end: false },
 ] as const;
 
 export function AppLayout() {
@@ -47,10 +46,10 @@ export function AppLayout() {
             </span>
           </NavLink>
           <div className={styles.headerEnd}>
-            <nav aria-label="Main">
+            <nav aria-label="Main" className={styles.navWrapper}>
               <ul className={styles.nav} role="list">
                 {NAV_ITEMS.map((item) => (
-                  <li key={item.to}>
+                  <li key={item.to} className={styles.navItem}>
                     <NavLink
                       to={item.to}
                       end={item.end}
@@ -87,7 +86,7 @@ export function AppLayout() {
             <Icon name="lock" size={16} /> Files are processed in your browser and never uploaded
           </p>
           <p className={styles.copyright}>
-            ©{' '}
+            © {new Date().getFullYear()}{' '}
             <a
               className={styles.copyrightLink}
               href="https://www.linkedin.com/in/renatolinsdigital"

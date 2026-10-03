@@ -12,7 +12,7 @@ import { cx } from '@/shared/helpers/cx';
 
 import styles from './HomePage.module.scss';
 
-const TICKER_ITEMS = ['Full HD 1920×1080', 'Five presets', 'Optimized GIFs', 'Zero uploads'];
+const TICKER_ITEMS = ['Full HD (1920×1080)', 'Five presets', 'Optimized GIFs', 'Zero uploads'];
 
 const STEPS = [
   {
@@ -29,28 +29,26 @@ const STEPS = [
   },
 ] as const;
 
-const FEATURES: ReadonlyArray<{ icon: IconName; title: string; text: string; isNew?: boolean }> = [
+const FEATURES: ReadonlyArray<{ icon: IconName; title: string; text: string }> = [
   {
     icon: 'monitor',
     title: 'Full HD export',
-    text: 'One tap for 1280 (HD) or 1920 (Full HD) wide GIFs. Smaller videos are never upscaled.',
-    isNew: true,
+    text: 'GIFs up to 1920 px wide. Smaller videos are never upscaled.',
   },
   {
     icon: 'sparkle',
     title: 'Smooth gradients',
-    text: 'The Full HD preset uses error-diffusion dithering and adaptive palettes. Fine-tune colors, dithering, pixel skipping and lossy compression yourself.',
-    isNew: true,
+    text: 'Dithering and adaptive palettes keep gradients free of banding.',
   },
   {
     icon: 'lock',
     title: 'Private by design',
-    text: 'Videos are decoded and encoded inside your browser. Nothing is uploaded, and there is no account.',
+    text: 'Everything runs in your browser. No uploads, no account.',
   },
   {
     icon: 'sliders',
     title: 'Optimized GIFs',
-    text: 'Pixels that don’t change between frames are skipped and colors are reused where it saves bytes, so each GIF stays as small as its look allows.',
+    text: 'Unchanged pixels are skipped and colors reused to keep files small.',
   },
 ];
 
@@ -83,13 +81,10 @@ export function HomePage() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroText}>
-          <p className={styles.eyebrow}>
-            <Icon name="lock" size={16} /> Runs locally in your browser
-          </p>
           <h1 className={styles.title}>
             MP4{' '}
             <span className={styles.arrow} aria-hidden="true">
-              →
+              <Icon name="arrowRight" />
             </span>
             <span className="visually-hidden">to</span> GIF
           </h1>
@@ -99,7 +94,7 @@ export function HomePage() {
           </p>
           <div className={styles.ctas}>
             <Link to="/converter" className={cx(styles.cta, styles.ctaPrimary)}>
-              Open the converter <Icon name="arrowRight" size={20} />
+              Open the converter <Icon name="arrowRight" size={24} />
             </Link>
             <a href="#how-it-works" className={styles.cta}>
               How it works
@@ -107,29 +102,31 @@ export function HomePage() {
           </div>
         </div>
 
-        <figure className={styles.spec}>
-          <figcaption className={styles.specHeader}>
-            <span>Best export</span>
-            <span className={styles.specTag}>Full HD preset</span>
-          </figcaption>
-          <div className={styles.specPreview} aria-hidden="true">
-            <Icon name="film" size={56} />
-          </div>
-          <dl className={styles.specFacts}>
-            <div>
-              <dt>Size</dt>
-              <dd>1920×1080</dd>
+        <div className={styles.heroVisual}>
+          <figure className={styles.spec}>
+            <figcaption className={styles.specHeader}>
+              <span>Best export</span>
+              <span className={styles.specTag}>Full HD preset</span>
+            </figcaption>
+            <div className={styles.specPreview} aria-hidden="true">
+              <Icon name="film" size={56} />
             </div>
-            <div>
-              <dt>Colors</dt>
-              <dd>256/frame</dd>
-            </div>
-            <div>
-              <dt>FPS</dt>
-              <dd>up to 30</dd>
-            </div>
-          </dl>
-        </figure>
+            <dl className={styles.specFacts}>
+              <div>
+                <dt>Size</dt>
+                <dd>1920×1080</dd>
+              </div>
+              <div>
+                <dt>Colors</dt>
+                <dd>256/frame</dd>
+              </div>
+              <div>
+                <dt>FPS</dt>
+                <dd>up to 30</dd>
+              </div>
+            </dl>
+          </figure>
+        </div>
       </section>
 
       <ul className={styles.ticker} role="list" aria-hidden="true">
@@ -225,13 +222,10 @@ export function HomePage() {
         <ul className={styles.features} role="list">
           {FEATURES.map((feature) => (
             <li key={feature.title} className={styles.card}>
-              <span className={cx(styles.featureIcon, feature.isNew && styles.featureIconNew)}>
+              <span className={styles.featureIcon}>
                 <Icon name={feature.icon} size={24} />
               </span>
-              <h3>
-                {feature.title}
-                {feature.isNew && <span className={styles.tag}>New</span>}
-              </h3>
+              <h3>{feature.title}</h3>
               <p>{feature.text}</p>
             </li>
           ))}

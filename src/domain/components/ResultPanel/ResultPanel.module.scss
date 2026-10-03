@@ -72,7 +72,8 @@
   flex-wrap: wrap;
   gap: theme.$space-xs;
 
-  > :first-child {
+  // Both buttons share the row; when Replay wraps, it fills its own line.
+  > * {
     flex: 1 1 auto;
   }
 }

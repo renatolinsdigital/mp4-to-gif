@@ -91,10 +91,25 @@
   }
 }
 
+// On mobile the nav and theme toggle take their own full-width row under the brand,
+// with the links sharing the space evenly. From tablet up they sit beside the brand.
 .headerEnd {
   display: flex;
   align-items: center;
   gap: theme.$space-xs;
+  width: 100%;
+
+  @include responsive.tablet {
+    width: auto;
+  }
+}
+
+.navWrapper {
+  flex: 1;
+
+  @include responsive.tablet {
+    flex: none;
+  }
 }
 
 .nav {
@@ -104,10 +119,19 @@
   margin: 0;
 }
 
+.navItem {
+  flex: 1;
+
+  @include responsive.tablet {
+    flex: none;
+  }
+}
+
 .navLink {
   @include helpers.label-type;
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: theme.$touch-target;
   padding: 0 theme.$space-xs;
   border: theme.$border-width solid transparent;

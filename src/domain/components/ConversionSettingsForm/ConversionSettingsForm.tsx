@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { QualitySelector } from '@/domain/components/QualitySelector';
 import { QualityTuningFields } from '@/domain/components/QualityTuningFields';
 import { SectionFields } from '@/domain/components/SectionFields';
-import { maxSecondsWithinBudget, resolveFrameRate } from '@/domain/helpers/conversionPlan';
+import { SpeedField } from '@/domain/components/SpeedField';
+import {
+  maxSecondsWithinBudget,
+  resolveFrameRate,
+  resolveSection,
+} from '@/domain/helpers/conversionPlan';
 import { QUALITY_PRESETS, applyPreset, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import {
   MAX_CUSTOM_WIDTH,
@@ -83,7 +88,7 @@ function memoryHint(settings: ConversionSettings): string | null {
   if (width === null || width < LARGE_WIDTH) return null;
   const height = Math.round((width * 9) / 16);
   const fps = resolveFrameRate(settings);
-  const seconds = maxSecondsWithinBudget({ width, height }, fps);
+  const seconds = maxSecondsWithinBudget({ width, height }, fps, settings.speed);
   return `At ${fps} FPS, 16:9 clips up to ${seconds} s fit in browser memory at ${width} × ${height}.`;
 }
 
@@ -113,6 +118,7 @@ export function ConversionSettingsForm({
 
   const autoFps = QUALITY_PRESETS[value.quality].frameRate;
   const budget = memoryHint(value);
+  const section = duration === undefined ? null : resolveSection(value.section, duration);
 
   return (
     <div className={styles.form}>
@@ -187,6 +193,13 @@ export function ConversionSettingsForm({
         currentTime={currentTime}
         disabled={disabled}
         onChange={(section) => update('section', section)}
+      />
+
+      <SpeedField
+        value={value.speed}
+        sectionLength={section ? section.end - section.start : undefined}
+        disabled={disabled}
+        onChange={(speed) => update('speed', speed)}
       />
     </div>
   );

@@ -1,7 +1,7 @@
-import { buildConversionPlan } from '@/domain/helpers/conversionPlan';
+import { buildConversionPlan, gifDurationSeconds } from '@/domain/helpers/conversionPlan';
 import { QUALITY_PRESETS, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import type { ConversionSettings, VideoMetadata } from '@/domain/types/conversion';
-import { formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
+import { formatDimensions, formatSeconds, formatSpeed } from '@/shared/helpers/formatters';
 
 import styles from './OutputDetails.module.scss';
 
@@ -19,6 +19,8 @@ export function OutputDetails({ settings, metadata }: OutputDetailsProps) {
       `${formatDimensions(plan.output.width, plan.output.height)}${plan.widthCapped ? ' (capped at source width)' : ''}`,
     ],
     ['Section', `${formatSeconds(plan.start)} to ${formatSeconds(plan.end)}`],
+    ['Speed', formatSpeed(plan.speed)],
+    ['GIF length', formatSeconds(gifDurationSeconds(plan))],
     ['Frame rate', `${plan.fps} FPS`],
     ['Frames', String(plan.frameTimes.length)],
     [

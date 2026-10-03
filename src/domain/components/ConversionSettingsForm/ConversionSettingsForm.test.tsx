@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
 
-import { DEFAULT_SETTINGS } from '@/domain/helpers/settingsSchema';
+import { DEFAULT_SETTINGS, SPEED_STEPS } from '@/domain/helpers/settingsSchema';
 
 import { ConversionSettingsForm } from './ConversionSettingsForm';
 
@@ -13,6 +13,23 @@ test('renders every setting group', () => {
   expect(screen.getByRole('button', { name: /Fine-tune quality/ })).toBeInTheDocument();
   expect(screen.getByRole('group', { name: 'Loop' })).toBeInTheDocument();
   expect(screen.getByRole('group', { name: 'Start / End' })).toBeInTheDocument();
+  expect(screen.getByRole('slider', { name: 'Speed' })).toBeInTheDocument();
+});
+
+test('changes the speed and describes the GIF length for the chosen section', () => {
+  const onChange = vi.fn();
+  render(
+    <ConversionSettingsForm
+      value={{ ...DEFAULT_SETTINGS, speed: 2, section: { mode: 'range', start: 10, end: 70 } }}
+      duration={120}
+      onChange={onChange}
+    />,
+  );
+  const slider = screen.getByRole('slider', { name: 'Speed' });
+  expect(slider).toHaveAccessibleDescription('60.0 s of video becomes a 30.0 s GIF.');
+
+  fireEvent.change(slider, { target: { value: String(SPEED_STEPS.indexOf(0.5)) } });
+  expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ speed: 0.5 }));
 });
 
 test('labels the automatic frame rate with the rate the preset will use', () => {

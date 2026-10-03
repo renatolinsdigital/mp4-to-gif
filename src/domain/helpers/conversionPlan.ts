@@ -52,23 +52,33 @@ export function resolveSection(
   return { start, end };
 }
 
+interface FrameTimelineOptions {
+  start: number;
+  end: number;
+  fps: number;
+  speed?: number;
+}
+
 /**
  * Builds frame timestamps and delays. Delays are rounded per frame against the cumulative
  * timeline, so a 30 FPS GIF alternates 30/30/40 ms instead of drifting from 33.3 ms rounding.
+ *
+ * Speed changes which moments of the video are captured, never the delays: at 2× each frame
+ * is 2/fps seconds of video further on. Shortening delays instead would break past 30 FPS,
+ * because browsers play delays under 20 ms as 100 ms.
  */
-export function buildFrameTimeline(
-  start: number,
-  end: number,
-  fps: number,
-): { times: number[]; delaysMs: number[] } {
-  const length = Math.max(0, end - start);
+export function buildFrameTimeline({ start, end, fps, speed = 1 }: FrameTimelineOptions): {
+  times: number[];
+  delaysMs: number[];
+} {
+  const length = Math.max(0, end - start) / speed;
   const frameCount = Math.max(1, Math.ceil(length * fps - 1e-9));
   const lastTime = Math.max(start, end - END_EPSILON);
   const times: number[] = [];
   const delaysMs: number[] = [];
 
   for (let i = 0; i < frameCount; i++) {
-    times.push(Math.min(start + i / fps, lastTime));
+    times.push(Math.min(start + (i * speed) / fps, lastTime));
     const startCs = Math.round((i * 100) / fps);
     const endCs = Math.round(((i + 1) * 100) / fps);
     delaysMs.push(Math.max(1, endCs - startCs) * 10);
@@ -83,7 +93,8 @@ export function buildConversionPlan(
   const fps = resolveFrameRate(settings);
   const { dimensions, capped } = resolveOutputDimensions(settings, metadata);
   const { start, end } = resolveSection(settings.section, metadata.duration);
-  const { times, delaysMs } = buildFrameTimeline(start, end, fps);
+  const { speed } = settings;
+  const { times, delaysMs } = buildFrameTimeline({ start, end, fps, speed });
 
   return {
     output: dimensions,
@@ -91,6 +102,7 @@ export function buildConversionPlan(
     fps,
     start,
     end,
+    speed,
     frameTimes: times,
     frameDelaysMs: delaysMs,
     loop: settings.loop,
@@ -110,9 +122,17 @@ export function exceedsMemoryBudget(plan: ConversionPlan): boolean {
   return plan.output.width * plan.output.height * plan.frameTimes.length > MAX_OUTPUT_PIXEL_FRAMES;
 }
 
-/** Longest section, in whole seconds, that fits the memory budget at this size and frame rate. */
-export function maxSecondsWithinBudget(output: Dimensions, fps: number): number {
-  return Math.floor(MAX_OUTPUT_PIXEL_FRAMES / (output.width * output.height * fps));
+/** How long the finished GIF plays, in seconds. */
+export function gifDurationSeconds(plan: Pick<ConversionPlan, 'frameDelaysMs'>): number {
+  return plan.frameDelaysMs.reduce((sum, delay) => sum + delay, 0) / 1000;
+}
+
+/**
+ * Longest section of video, in whole seconds, that fits the memory budget at this size and
+ * frame rate. Speeding up fits more video, since fewer frames cover the same section.
+ */
+export function maxSecondsWithinBudget(output: Dimensions, fps: number, speed = 1): number {
+  return Math.floor((MAX_OUTPUT_PIXEL_FRAMES * speed) / (output.width * output.height * fps));
 }
 
 /** Evenly spaced subset of frame times, used to build a shared palette. */
