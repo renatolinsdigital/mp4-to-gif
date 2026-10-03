@@ -1,0 +1,67 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+// Dense controls: the settings read as secondary to the video above them.
+.panel {
+  font-size: theme.$font-size-sm;
+}
+
+.convert {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+  margin: theme.$space-lg (-(theme.$space-md)) 0;
+  padding: theme.$space-md theme.$space-md 0;
+  border-top: theme.$border-width solid theme.$color-border;
+
+  @include responsive.tablet {
+    margin-inline: -(theme.$space-lg);
+    padding-inline: theme.$space-lg;
+  }
+}
+
+.subheading {
+  @include helpers.label-type;
+  margin-bottom: theme.$space-2xs;
+  font-size: theme.$font-size-xs;
+}
+
+.warning {
+  @include helpers.border;
+  display: flex;
+  align-items: flex-start;
+  gap: theme.$space-xs;
+  padding: theme.$space-xs theme.$space-sm;
+  background: theme.$color-warning;
+  color: theme.$color-on-status;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-semibold;
+
+  svg {
+    flex: none;
+    margin-top: 1px;
+  }
+}
+
+.error {
+  color: theme.$color-error-text;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-bold;
+}
+
+.progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: theme.$space-sm;
+
+  > :first-child {
+    flex: 1 1 12rem;
+  }
+}
+
+.hint {
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-xs;
+}

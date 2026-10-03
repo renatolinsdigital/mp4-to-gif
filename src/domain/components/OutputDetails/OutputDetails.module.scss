@@ -1,0 +1,29 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  border-top: theme.$border-width-thin solid theme.$color-border;
+  border-left: theme.$border-width-thin solid theme.$color-border;
+}
+
+.row {
+  padding: theme.$space-xs theme.$space-sm;
+  border-right: theme.$border-width-thin solid theme.$color-border;
+  border-bottom: theme.$border-width-thin solid theme.$color-border;
+  background: theme.$color-surface;
+
+  dt {
+    @include helpers.label-type;
+    color: theme.$color-text-muted;
+    font-size: theme.$font-size-xs;
+  }
+
+  dd {
+    @include helpers.mono-type;
+    margin: 0;
+    font-size: theme.$font-size-sm;
+    font-weight: theme.$font-weight-bold;
+  }
+}

@@ -1,0 +1,115 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/animations';
+
+@include animations.keyframes(spin);
+
+.button {
+  @include helpers.border;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: theme.$space-xs;
+  border-radius: theme.$radius-md;
+  font-weight: theme.$font-weight-extrabold;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+  }
+}
+
+.sm {
+  min-height: theme.$touch-target;
+  padding: theme.$space-2xs theme.$space-sm;
+  font-size: theme.$font-size-xs;
+}
+
+.md {
+  min-height: theme.$touch-target;
+  padding: theme.$space-xs theme.$space-md;
+  font-size: theme.$font-size-sm;
+}
+
+.lg {
+  min-height: 4rem;
+  padding: theme.$space-sm theme.$space-lg;
+  font-size: theme.$font-size-xl;
+}
+
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+
+  &.sm,
+  &.md {
+    width: theme.$touch-target;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+// Raised variants carry a hard shadow and the press effect.
+.primary,
+.secondary,
+.accent {
+  box-shadow: theme.$shadow-sm;
+  @include helpers.press-effect;
+}
+
+.primary {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+
+  &.lg {
+    box-shadow: theme.$shadow-md;
+    @include helpers.press-effect(theme.$shadow-offset-md);
+  }
+}
+
+.secondary {
+  background: theme.$color-surface;
+  color: theme.$color-text;
+}
+
+.accent {
+  background: theme.$color-secondary;
+  color: theme.$color-on-secondary;
+}
+
+.ghost {
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover:not(:disabled) {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+  }
+}
+
+.danger {
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover:not(:disabled) {
+    background: theme.$color-error;
+    color: theme.$color-on-status;
+  }
+}
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  border: 3px solid currentColor;
+  border-right-color: transparent;
+  @include animations.spin(0.7s);
+}

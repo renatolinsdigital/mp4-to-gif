@@ -1,0 +1,203 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/animations';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+@include animations.keyframes(fade-up);
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.skipLink {
+  @include helpers.border;
+  @include helpers.label-type;
+  position: absolute;
+  z-index: theme.$z-modal;
+  top: theme.$space-xs;
+  left: theme.$space-xs;
+  padding: theme.$space-xs theme.$space-md;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  text-decoration: none;
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+    color: theme.$color-on-primary;
+  }
+}
+
+.header {
+  position: sticky;
+  z-index: theme.$z-header;
+  top: 0;
+  border-bottom: theme.$border-width solid theme.$color-border;
+  background: theme.$color-surface;
+}
+
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-xs theme.$space-md;
+  max-width: theme.$content-max-width;
+  margin: 0 auto;
+  padding: theme.$space-xs theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-sm theme.$space-xl;
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-sm;
+  color: theme.$color-text;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: none;
+    color: theme.$color-text;
+
+    .logo {
+      transform: rotate(-6deg);
+    }
+  }
+}
+
+.logo {
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  width: theme.$touch-target;
+  height: theme.$touch-target;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  transition: transform theme.$duration-base theme.$easing-standard;
+}
+
+.wordmark {
+  @include helpers.display-type;
+  font-size: theme.$font-size-xl;
+
+  @include responsive.tablet {
+    font-size: theme.$font-size-2xl;
+  }
+}
+
+.headerEnd {
+  display: flex;
+  align-items: center;
+  gap: theme.$space-xs;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-2xs;
+  margin: 0;
+}
+
+.navLink {
+  @include helpers.label-type;
+  display: flex;
+  align-items: center;
+  min-height: theme.$touch-target;
+  padding: 0 theme.$space-xs;
+  border: theme.$border-width solid transparent;
+  color: theme.$color-text;
+  text-decoration: none;
+
+  @include responsive.tablet {
+    padding: 0 theme.$space-sm;
+  }
+
+  &:hover {
+    border-color: theme.$color-border;
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+  }
+}
+
+.active,
+.active:hover {
+  @include helpers.inverted;
+  border-color: theme.$color-border;
+}
+
+.themeToggle {
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  width: theme.$touch-target;
+  height: theme.$touch-target;
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  box-shadow: theme.$shadow-sm;
+  @include helpers.press-effect;
+
+  &:hover {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+  }
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: theme.$content-max-width;
+  margin: 0 auto;
+  padding: theme.$space-lg theme.$space-md theme.$space-3xl;
+
+  @include responsive.tablet {
+    padding: theme.$space-2xl theme.$space-xl theme.$space-4xl;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.page {
+  @include animations.fade-up;
+}
+
+.footer {
+  @include helpers.inverted;
+  border-top: theme.$border-width solid theme.$color-border;
+}
+
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-sm;
+  max-width: theme.$content-max-width;
+  margin: 0 auto;
+  padding: theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-lg theme.$space-xl;
+  }
+}
+
+.footerNote {
+  @include helpers.label-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-xs;
+}
+
+.footerMark {
+  @include helpers.mono-type;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+}

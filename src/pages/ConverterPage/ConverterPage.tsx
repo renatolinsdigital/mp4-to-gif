@@ -1,0 +1,49 @@
+import { useState } from 'react';
+
+import { DropZone } from '@/domain/components/DropZone';
+import { LocalProcessingNotice } from '@/domain/components/LocalProcessingNotice';
+import { ResultPanel } from '@/domain/components/ResultPanel';
+import { SettingsPanel } from '@/domain/components/SettingsPanel';
+import { SourceVideoPanel } from '@/domain/components/SourceVideoPanel';
+import { useConverter } from '@/domain/hooks/useConverter';
+
+import styles from './ConverterPage.module.scss';
+
+/** One file at a time: the video, its settings below it, then the GIF. */
+export function ConverterPage() {
+  const converter = useConverter();
+  const { job, settings } = converter;
+  const [currentTime, setCurrentTime] = useState(0);
+
+  return (
+    <div className={styles.page}>
+      <header className={styles.intro}>
+        <h1 className="visually-hidden">Converter</h1>
+        <LocalProcessingNotice />
+      </header>
+
+      {job ? (
+        <>
+          <SourceVideoPanel
+            key={job.id}
+            job={job}
+            settings={settings}
+            onRemove={converter.clearFile}
+            onTimeChange={setCurrentTime}
+          />
+          <SettingsPanel
+            job={job}
+            settings={settings}
+            currentTime={currentTime}
+            onSettingsChange={converter.setSettings}
+            onConvert={converter.convert}
+            onCancel={converter.cancel}
+          />
+          {job.result && <ResultPanel sourceName={job.file.name} result={job.result} />}
+        </>
+      ) : (
+        <DropZone onFiles={converter.selectFiles} />
+      )}
+    </div>
+  );
+}

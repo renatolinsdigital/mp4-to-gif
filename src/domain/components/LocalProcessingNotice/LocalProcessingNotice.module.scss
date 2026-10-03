@@ -1,0 +1,25 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+// An inverted "stamp" so the privacy promise reads before anything else on the page.
+.notice {
+  @include helpers.inverted;
+  display: flex;
+  align-items: flex-start;
+  gap: theme.$space-xs;
+  max-width: 44rem;
+  padding: theme.$space-xs theme.$space-sm;
+  font-size: theme.$font-size-sm;
+
+  strong {
+    font-weight: theme.$font-weight-extrabold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: theme.$color-primary;
+}

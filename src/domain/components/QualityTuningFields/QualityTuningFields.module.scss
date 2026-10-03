@@ -1,0 +1,67 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.box {
+  @include helpers.border;
+  background: theme.$color-surface;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-sm;
+  width: 100%;
+  min-height: theme.$touch-target;
+  padding: theme.$space-2xs theme.$space-sm;
+  border: 0;
+  background: transparent;
+  color: theme.$color-text;
+  text-align: left;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover {
+    background: theme.$color-primary-soft;
+  }
+}
+
+.toggleLabel {
+  @include helpers.label-type;
+  font-size: theme.$font-size-xs;
+}
+
+.toggleEnd {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: theme.$space-xs;
+}
+
+.chevron {
+  flex: none;
+  transition: transform theme.$duration-base theme.$easing-standard;
+}
+
+.open .chevron {
+  transform: rotate(180deg);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-md;
+  padding: theme.$space-sm;
+  border-top: theme.$border-width solid theme.$color-border;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+}
+
+.hint {
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-xs;
+}

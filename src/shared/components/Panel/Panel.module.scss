@@ -1,0 +1,47 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+.panel {
+  @include helpers.card-surface;
+  min-width: 0;
+}
+
+// Inverted header strip, the panel's "label".
+.header {
+  @include helpers.inverted;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-sm;
+  padding: theme.$space-sm theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-md theme.$space-lg;
+  }
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-2xl;
+}
+
+.description {
+  margin-top: theme.$space-2xs;
+  font-size: theme.$font-size-sm;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-xs;
+}
+
+.body {
+  padding: theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-lg;
+  }
+}

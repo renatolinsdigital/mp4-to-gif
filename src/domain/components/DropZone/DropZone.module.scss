@@ -1,0 +1,50 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+.zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: theme.$space-md;
+  min-height: 15rem;
+  padding: theme.$space-xl theme.$space-md;
+  border: theme.$border-width dashed theme.$color-border;
+  background: theme.$color-surface;
+  text-align: center;
+  transition:
+    background-color theme.$duration-base theme.$easing-standard,
+    box-shadow theme.$duration-base theme.$easing-standard;
+
+  @include responsive.tablet {
+    min-height: 20rem;
+  }
+}
+
+// Dashed turns solid and the zone lights up, so the drop target is unmistakable.
+.dragging {
+  border-style: solid;
+  background: theme.$color-primary-soft;
+  box-shadow: theme.$shadow-md;
+}
+
+.iconWrap {
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  width: 5rem;
+  height: 5rem;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-display-sm;
+}
+
+.subtitle {
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-md;
+}

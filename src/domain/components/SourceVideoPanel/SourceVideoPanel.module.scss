@@ -1,0 +1,65 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.fileName {
+  @include helpers.mono-type;
+  word-break: break-all;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+}
+
+.video,
+.placeholder {
+  @include helpers.border;
+  width: 100%;
+  background: theme.$color-surface-sunken;
+}
+
+.video {
+  display: block;
+  max-height: 26rem;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: theme.$space-xs;
+  min-height: 12rem;
+  padding: theme.$space-md;
+  color: theme.$color-text-muted;
+  font-weight: theme.$font-weight-semibold;
+  text-align: center;
+
+  [role='alert'] {
+    color: theme.$color-error-text;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-xs theme.$space-md;
+}
+
+.meta {
+  @include helpers.meta-text;
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-2xs theme.$space-md;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: theme.$space-xs theme.$space-sm;
+  font-size: theme.$font-size-sm;
+}

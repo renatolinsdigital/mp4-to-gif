@@ -1,0 +1,18 @@
+@use '@/global-styles/theme';
+
+// A single column keeps the order of work top to bottom: video, settings, GIF.
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xl;
+  width: 100%;
+  max-width: theme.$content-narrow-width;
+  margin-inline: auto;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-md;
+}

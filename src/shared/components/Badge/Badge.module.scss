@@ -1,0 +1,49 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+// Status "tag": the text carries the meaning, the fill only reinforces it.
+.badge {
+  @include helpers.border(theme.$border-width-thin);
+  @include helpers.mono-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-2xs;
+  padding: theme.$space-3xs theme.$space-xs;
+  border-radius: theme.$radius-pill;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-bold;
+  line-height: 1.4;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.neutral {
+  background: theme.$color-surface;
+  color: theme.$color-text;
+}
+
+.primary,
+.info {
+  background: theme.$color-secondary;
+  color: theme.$color-on-secondary;
+}
+
+.success {
+  background: theme.$color-success;
+  color: theme.$color-on-status;
+}
+
+.warning {
+  background: theme.$color-warning;
+  color: theme.$color-on-status;
+}
+
+.error {
+  background: theme.$color-error;
+  color: theme.$color-on-status;
+}
+
+.accent {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}

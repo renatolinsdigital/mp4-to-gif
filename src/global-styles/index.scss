@@ -1,0 +1,60 @@
+@use 'reset';
+@use 'theme';
+@use 'helpers';
+@use 'animations';
+
+// The theme follows the OS unless the user picked one; the choice is stored on <html data-theme>.
+:root {
+  @include theme.light-tokens;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include theme.dark-tokens;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include theme.dark-tokens;
+  color-scheme: dark;
+}
+
+html {
+  font-family: theme.$font-family-base;
+}
+
+body {
+  background: theme.$color-bg;
+  color: theme.$color-text;
+  font-size: theme.$font-size-md;
+  line-height: theme.$line-height-base;
+}
+
+h1,
+h2,
+h3 {
+  line-height: theme.$line-height-tight;
+  font-weight: theme.$font-weight-extrabold;
+}
+
+a {
+  color: theme.$color-text;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    color: theme.$color-text;
+    background: theme.$color-primary;
+  }
+}
+
+:focus-visible {
+  @include helpers.focus-ring;
+}
+
+::selection {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}

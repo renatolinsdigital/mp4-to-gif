@@ -1,0 +1,106 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+  min-width: 0;
+}
+
+.label {
+  @include helpers.label-type;
+}
+
+.control {
+  @include helpers.border;
+  display: flex;
+  align-items: center;
+  border-radius: theme.$radius-md;
+  background: theme.$color-surface;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover {
+    background: theme.$color-primary-soft;
+  }
+
+  &:focus-within {
+    @include helpers.focus-ring;
+    background: theme.$color-surface;
+  }
+}
+
+.invalid {
+  border-color: theme.$color-error-text;
+  box-shadow: theme.$shadow-offset-sm theme.$shadow-offset-sm 0 theme.$color-error;
+}
+
+.input,
+.textarea {
+  flex: 1;
+  min-width: 0;
+  padding: theme.$space-xs theme.$space-sm;
+  border: 0;
+  background: transparent;
+  font-size: theme.$font-size-md;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.input {
+  @include helpers.mono-type;
+  min-height: 2.75rem;
+  font-weight: theme.$font-weight-semibold;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+.suffix {
+  @include helpers.mono-type;
+  padding-right: theme.$space-sm;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+}
+
+.hint {
+  font-size: theme.$font-size-xs;
+  color: theme.$color-text-subtle;
+}
+
+.error {
+  color: theme.$color-error-text;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+}
+
+.sm {
+  gap: theme.$space-2xs;
+
+  .label,
+  .error {
+    font-size: theme.$font-size-xs;
+  }
+
+  .input {
+    min-height: 2.25rem;
+    font-size: theme.$font-size-sm;
+  }
+
+  .suffix,
+  .hint {
+    font-size: theme.$font-size-2xs;
+  }
+}

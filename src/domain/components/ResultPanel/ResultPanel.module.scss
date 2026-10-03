@@ -1,0 +1,78 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/animations';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+@include animations.keyframes(fade-up);
+
+.fileName {
+  @include helpers.mono-type;
+  word-break: break-all;
+}
+
+.layout {
+  display: grid;
+  gap: theme.$space-md;
+  @include animations.fade-up;
+
+  @include responsive.tablet {
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+  }
+}
+
+.preview {
+  @include helpers.checkerboard(16px);
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+
+  img {
+    max-height: 26rem;
+    object-fit: contain;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-md;
+}
+
+// Fact grid: thin ruled cells, like a spec sheet.
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: theme.$border-width-thin solid theme.$color-border;
+  border-left: theme.$border-width-thin solid theme.$color-border;
+
+  div {
+    padding: theme.$space-2xs theme.$space-xs;
+    border-right: theme.$border-width-thin solid theme.$color-border;
+    border-bottom: theme.$border-width-thin solid theme.$color-border;
+  }
+
+  dt {
+    @include helpers.label-type;
+    color: theme.$color-text-muted;
+    font-size: theme.$font-size-xs;
+  }
+
+  dd {
+    @include helpers.mono-type;
+    margin: 0;
+    font-size: theme.$font-size-sm;
+    font-weight: theme.$font-weight-bold;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-xs;
+
+  > :first-child {
+    flex: 1 1 auto;
+  }
+}

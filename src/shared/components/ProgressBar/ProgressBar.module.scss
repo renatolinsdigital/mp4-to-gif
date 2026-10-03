@@ -1,0 +1,58 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: theme.$space-sm;
+}
+
+.track {
+  @include helpers.border(theme.$border-width-thin);
+  flex: 1;
+  overflow: hidden;
+  background: theme.$color-surface;
+  border-radius: theme.$radius-pill;
+}
+
+.sm {
+  height: 0.875rem;
+}
+
+.md {
+  height: 1.25rem;
+}
+
+.lg {
+  height: 1.5rem;
+  border-width: theme.$border-width;
+}
+
+.fill {
+  height: 100%;
+  transition: width theme.$duration-base theme.$easing-standard;
+}
+
+.primary {
+  background: repeating-linear-gradient(
+    -45deg,
+    theme.$color-secondary 0 10px,
+    theme.$color-secondary-deep 10px 20px
+  );
+}
+
+.success {
+  background: theme.$color-success;
+}
+
+.error {
+  background: theme.$color-error;
+}
+
+.value {
+  @include helpers.mono-type;
+  min-width: 4ch;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+  text-align: right;
+}

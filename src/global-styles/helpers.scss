@@ -1,0 +1,117 @@
+@use 'theme';
+
+// Mixins are imported by component modules. Only `.visually-hidden` is emitted globally,
+// because it is applied from markup in several unrelated components.
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin focus-ring {
+  outline: theme.$focus-ring-width solid theme.$color-focus-ring;
+  outline-offset: theme.$focus-ring-width;
+}
+
+@mixin border($width: theme.$border-width) {
+  border: $width solid theme.$color-border;
+}
+
+@mixin card-surface($shadow: theme.$shadow-md) {
+  @include border;
+  background: theme.$color-surface;
+  border-radius: theme.$radius-lg;
+  box-shadow: $shadow;
+}
+
+// Tactile "press" for raised elements: lifts on hover, sinks into its shadow when pressed.
+@mixin press-effect($offset: theme.$shadow-offset-sm) {
+  transition:
+    transform theme.$duration-fast theme.$easing-standard,
+    box-shadow theme.$duration-fast theme.$easing-standard,
+    background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: ($offset + 2px) ($offset + 2px) 0 theme.$color-border;
+  }
+
+  &:active:not(:disabled) {
+    transform: translate($offset, $offset);
+    box-shadow: 0 0 0 theme.$color-border;
+  }
+}
+
+@mixin display-type {
+  font-family: theme.$font-family-base;
+  font-stretch: theme.$font-stretch-display;
+  font-weight: theme.$font-weight-black;
+  letter-spacing: theme.$letter-spacing-display;
+  line-height: theme.$line-height-display;
+  text-transform: uppercase;
+}
+
+@mixin label-type {
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-extrabold;
+  letter-spacing: theme.$letter-spacing-label;
+  line-height: theme.$line-height-tight;
+  text-transform: uppercase;
+}
+
+@mixin mono-type {
+  font-family: theme.$font-family-mono;
+  font-variant-numeric: tabular-nums;
+}
+
+// Inverted strip used for panel headers and small "stamp" labels.
+@mixin inverted {
+  background: theme.$color-text;
+  color: theme.$color-bg;
+}
+
+@mixin hatch($size: 8px) {
+  background: repeating-linear-gradient(
+    45deg,
+    theme.$color-surface-sunken 0 $size,
+    theme.$color-surface $size ($size * 2)
+  );
+}
+
+@mixin checkerboard($size: 12px) {
+  background-color: theme.$color-checker-a;
+  background-image:
+    linear-gradient(45deg, theme.$color-checker-b 25%, transparent 25%),
+    linear-gradient(-45deg, theme.$color-checker-b 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, theme.$color-checker-b 75%),
+    linear-gradient(-45deg, transparent 75%, theme.$color-checker-b 75%);
+  background-size: $size $size;
+  background-position:
+    0 0,
+    0 calc($size / 2),
+    calc($size / 2) calc($size / -2),
+    calc($size / -2) 0;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin meta-text {
+  @include mono-type;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-sm;
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}

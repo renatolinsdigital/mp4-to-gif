@@ -1,0 +1,24 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-md;
+  padding: theme.$space-2xl 0;
+
+  h1 {
+    @include helpers.display-type;
+    font-size: theme.$font-size-display;
+  }
+
+  p {
+    color: theme.$color-text-muted;
+    font-size: theme.$font-size-lg;
+  }
+
+  a {
+    @include helpers.label-type;
+  }
+}

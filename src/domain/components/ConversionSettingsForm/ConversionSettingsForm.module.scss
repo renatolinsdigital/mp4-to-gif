@@ -1,0 +1,31 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-lg;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+}
+
+.note {
+  @include helpers.border;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xs;
+  padding: theme.$space-xs theme.$space-sm;
+  background: theme.$color-surface-sunken;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-semibold;
+}
+
+.budget {
+  @include helpers.meta-text;
+  font-size: theme.$font-size-2xs;
+  font-weight: theme.$font-weight-regular;
+}

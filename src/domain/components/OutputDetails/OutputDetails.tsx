@@ -1,0 +1,42 @@
+import { buildConversionPlan, estimateGifSize } from '@/domain/helpers/conversionPlan';
+import { QUALITY_PRESETS, isTuned } from '@/domain/helpers/qualityPresets';
+import type { ConversionSettings, VideoMetadata } from '@/domain/types/conversion';
+import { formatBytes, formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
+
+import styles from './OutputDetails.module.scss';
+
+interface OutputDetailsProps {
+  settings: ConversionSettings;
+  metadata: VideoMetadata;
+}
+
+/** What the GIF will look like with these settings, before converting. */
+export function OutputDetails({ settings, metadata }: OutputDetailsProps) {
+  const plan = buildConversionPlan(settings, metadata);
+  const rows: Array<[string, string]> = [
+    [
+      'Dimensions',
+      `${formatDimensions(plan.output.width, plan.output.height)}${plan.widthCapped ? ' (capped at source width)' : ''}`,
+    ],
+    ['Section', `${formatSeconds(plan.start)} to ${formatSeconds(plan.end)}`],
+    ['Frame rate', `${plan.fps} FPS`],
+    ['Frames', String(plan.frameTimes.length)],
+    [
+      'Quality',
+      `${QUALITY_PRESETS[settings.quality].label}${isTuned(settings.quality, settings.tuning) ? ' (tuned)' : ''}`,
+    ],
+    ['Loop', settings.loop === 'infinite' ? 'Infinite' : 'Once'],
+    ['Estimated size', `about ${formatBytes(estimateGifSize(plan))}`],
+  ];
+
+  return (
+    <dl className={styles.list}>
+      {rows.map(([term, detail]) => (
+        <div key={term} className={styles.row}>
+          <dt>{term}</dt>
+          <dd>{detail}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}

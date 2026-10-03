@@ -1,0 +1,49 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+  min-width: 0;
+}
+
+.label {
+  @include helpers.label-type;
+}
+
+.select {
+  @include helpers.border;
+  width: 100%;
+  min-height: 3rem;
+  padding: theme.$space-xs theme.$space-xl theme.$space-xs theme.$space-sm;
+  border-radius: theme.$radius-md;
+  background-color: theme.$color-surface;
+  // Chevron drawn with gradients so it follows the text color in both themes.
+  background-image:
+    linear-gradient(45deg, transparent 50%, theme.$color-text 50%),
+    linear-gradient(135deg, theme.$color-text 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) 50%,
+    calc(100% - 14px) 50%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  appearance: none;
+  font-size: theme.$font-size-md;
+  font-weight: theme.$font-weight-semibold;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: theme.$color-primary-soft;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.hint {
+  font-size: theme.$font-size-xs;
+  color: theme.$color-text-subtle;
+}

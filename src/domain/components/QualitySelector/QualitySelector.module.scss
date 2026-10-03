@@ -1,0 +1,26 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+}
+
+.scale {
+  @include helpers.mono-type;
+  display: flex;
+  justify-content: space-between;
+  gap: theme.$space-xs;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-2xs;
+  font-weight: theme.$font-weight-semibold;
+}
+
+.summary {
+  @include helpers.border;
+  padding: theme.$space-xs theme.$space-sm;
+  background: theme.$color-surface-sunken;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-semibold;
+}

@@ -1,0 +1,71 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/animations';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+@include animations.keyframes(fade-up);
+
+.dialog {
+  @include helpers.border;
+  width: calc(100% - #{theme.$space-md * 2});
+  max-height: calc(100dvh - #{theme.$space-md * 2});
+  margin: auto;
+  padding: 0;
+  border-radius: theme.$radius-lg;
+  background: theme.$color-surface-raised;
+  color: theme.$color-text;
+  box-shadow: theme.$shadow-lg;
+  @include animations.fade-up(theme.$duration-base);
+
+  &::backdrop {
+    background: theme.$color-overlay;
+  }
+}
+
+.md {
+  max-width: 34rem;
+}
+
+.lg {
+  max-width: 64rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+
+.header {
+  @include helpers.inverted;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-md;
+  padding: theme.$space-sm theme.$space-sm theme.$space-sm theme.$space-lg;
+}
+
+.title {
+  @include helpers.mono-type;
+  font-size: theme.$font-size-md;
+  font-weight: theme.$font-weight-bold;
+  overflow-wrap: anywhere;
+}
+
+.body {
+  overflow-y: auto;
+  padding: theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-lg;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: theme.$space-xs;
+  padding: theme.$space-sm theme.$space-lg;
+  border-top: theme.$border-width solid theme.$color-border;
+}

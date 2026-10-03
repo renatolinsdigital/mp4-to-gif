@@ -1,0 +1,101 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.legend {
+  @include helpers.label-type;
+  margin-bottom: theme.$space-2xs;
+  font-size: theme.$font-size-xs;
+  padding: 0;
+}
+
+// Options wrap onto as many rows as the width needs. Each option draws its right and
+// bottom edge and the group draws top and left, so the grid lines never double up.
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: theme.$border-width solid theme.$color-border;
+  border-left: theme.$border-width solid theme.$color-border;
+  background: theme.$color-surface;
+}
+
+.option {
+  position: relative;
+  flex: 1 1 var(--option-min, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: theme.$space-3xs;
+  min-height: theme.$touch-target;
+  padding: theme.$space-2xs theme.$space-xs;
+  border-right: theme.$border-width solid theme.$color-border;
+  border-bottom: theme.$border-width solid theme.$color-border;
+  color: theme.$color-text;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-extrabold;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+
+    .hint {
+      color: theme.$color-on-primary;
+    }
+  }
+
+  &:has(.input:focus-visible) {
+    @include helpers.focus-ring;
+    z-index: theme.$z-raised;
+    outline-offset: -6px;
+  }
+}
+
+.compact {
+  --option-min: 3.25rem;
+}
+
+.hint {
+  @include helpers.mono-type;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-2xs;
+  font-weight: theme.$font-weight-semibold;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+// Selected state inverts, so it reads without relying on color.
+.selected,
+.selected:hover {
+  background: theme.$color-text;
+  color: theme.$color-bg;
+
+  .hint {
+    color: theme.$color-bg;
+  }
+}
+
+.input {
+  @include helpers.visually-hidden;
+}
+
+.fieldset:disabled .option {
+  cursor: not-allowed;
+  opacity: 0.6;
+
+  &:hover:not(.selected) {
+    background: theme.$color-surface;
+    color: theme.$color-text;
+  }
+}

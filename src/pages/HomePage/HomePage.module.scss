@@ -1,0 +1,351 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-3xl;
+
+  @include responsive.desktop {
+    gap: theme.$space-4xl;
+  }
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: theme.$space-2xl;
+  padding-top: theme.$space-md;
+
+  @include responsive.desktop {
+    padding-top: theme.$space-xl;
+  }
+}
+
+.heroText {
+  display: flex;
+  flex: 999 1 30rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-lg;
+  min-width: 0;
+}
+
+.eyebrow {
+  @include helpers.inverted;
+  @include helpers.label-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-xs;
+  padding: theme.$space-xs theme.$space-sm;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: clamp(3.5rem, 11vw, 9.5rem);
+  line-height: 0.88;
+}
+
+.arrow {
+  @include helpers.border;
+  display: inline-block;
+  padding: 0 0.08em;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}
+
+.lead {
+  max-width: 40ch;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: theme.$font-weight-medium;
+  line-height: 1.45;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-md;
+  margin-top: theme.$space-xs;
+}
+
+.cta {
+  @include helpers.border;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-xs;
+  min-height: 3.5rem;
+  padding: 0 theme.$space-lg;
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  font-size: theme.$font-size-md;
+  font-weight: theme.$font-weight-extrabold;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: theme.$shadow-md;
+  @include helpers.press-effect(theme.$shadow-offset-md);
+
+  &:hover {
+    background: theme.$color-surface;
+    color: theme.$color-text;
+  }
+}
+
+.ctaPrimary,
+.ctaPrimary:hover {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}
+
+.spec {
+  @include helpers.card-surface(theme.$shadow-lg);
+  flex: 1 1 20rem;
+  min-width: 0;
+  margin: 0;
+}
+
+.specHeader {
+  @include helpers.inverted;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-xs;
+  padding: theme.$space-xs theme.$space-md;
+
+  > :first-child {
+    @include helpers.label-type;
+  }
+}
+
+.specTag {
+  @include helpers.mono-type;
+  padding: theme.$space-3xs theme.$space-xs;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  font-size: theme.$font-size-xs;
+  font-weight: theme.$font-weight-bold;
+  text-transform: uppercase;
+}
+
+.specPreview {
+  @include helpers.checkerboard(24px);
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  color: theme.$color-text;
+}
+
+.specFacts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: theme.$border-width solid theme.$color-border;
+
+  div {
+    padding: theme.$space-xs theme.$space-sm;
+
+    & + div {
+      border-left: theme.$border-width solid theme.$color-border;
+    }
+  }
+
+  dt {
+    @include helpers.label-type;
+    color: theme.$color-text-muted;
+    font-size: theme.$font-size-xs;
+  }
+
+  dd {
+    @include helpers.mono-type;
+    margin: 0;
+    font-weight: theme.$font-weight-bold;
+  }
+}
+
+.ticker {
+  @include helpers.border;
+  overflow: hidden;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  white-space: nowrap;
+
+  p {
+    @include helpers.display-type;
+    padding: theme.$space-sm 0;
+    font-size: theme.$font-size-xl;
+  }
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: theme.$space-sm theme.$space-xl;
+  margin-bottom: theme.$space-lg;
+
+  .sectionTitle {
+    margin-bottom: 0;
+  }
+}
+
+.sectionTitle {
+  @include helpers.display-type;
+  margin-bottom: theme.$space-lg;
+  font-size: theme.$font-size-display-sm;
+}
+
+.sectionLead {
+  max-width: 46ch;
+  color: theme.$color-text-muted;
+}
+
+.steps,
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: theme.$space-lg;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  @include helpers.card-surface;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+  padding: theme.$space-lg;
+
+  h3 {
+    @include helpers.display-type;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: theme.$space-xs;
+    font-size: theme.$font-size-xl;
+  }
+
+  p {
+    color: theme.$color-text-muted;
+  }
+}
+
+.stepNumber {
+  @include helpers.display-type;
+  color: transparent;
+  font-size: 4.5rem;
+  -webkit-text-stroke: theme.$border-width theme.$color-text;
+}
+
+.featureIcon {
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  background: theme.$color-surface;
+  color: theme.$color-text;
+}
+
+.featureIconNew {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}
+
+.newTag {
+  @include helpers.border(theme.$border-width-thin);
+  @include helpers.mono-type;
+  padding: theme.$space-3xs theme.$space-xs;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  font-size: theme.$font-size-xs;
+  font-stretch: 100%;
+  font-weight: theme.$font-weight-bold;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+// Wide table scrolls inside its own box on narrow screens instead of the whole page.
+.tableBox {
+  @include helpers.card-surface;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  text-align: left;
+
+  th,
+  td {
+    padding: theme.$space-sm theme.$space-md;
+  }
+
+  thead tr {
+    @include helpers.inverted;
+  }
+
+  thead th {
+    @include helpers.label-type;
+    font-size: theme.$font-size-xs;
+  }
+
+  tbody tr {
+    border-top: theme.$border-width solid theme.$color-border;
+  }
+
+  tbody th {
+    font-weight: theme.$font-weight-extrabold;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    .newTag {
+      margin-left: theme.$space-xs;
+    }
+  }
+
+  td {
+    @include helpers.mono-type;
+  }
+
+  td:last-child {
+    width: 28%;
+  }
+}
+
+.highlightRow {
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+
+  .newTag {
+    background: theme.$color-on-primary;
+    color: theme.$color-primary;
+    border-color: theme.$color-on-primary;
+  }
+
+  .bar {
+    border-color: theme.$color-on-primary;
+    background: theme.$color-checker-a;
+  }
+
+  .barFill {
+    background: theme.$color-on-primary;
+  }
+}
+
+.bar {
+  @include helpers.border(theme.$border-width-thin);
+  display: block;
+  height: 1.125rem;
+  background: theme.$color-surface;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  background: theme.$color-text;
+}
