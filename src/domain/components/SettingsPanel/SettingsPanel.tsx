@@ -30,7 +30,7 @@ function convertLabel(job: ConversionJob): string {
   return 'Convert to GIF';
 }
 
-/** Output settings for the current video, the size estimate and the Convert action. */
+/** Output settings for the current video, a summary of the GIF they make, and the Convert action. */
 export function SettingsPanel({
   job,
   settings,
@@ -59,8 +59,8 @@ export function SettingsPanel({
 
       <div className={styles.convert}>
         {metadata && !isProcessing && (
-          <div className={styles.estimate}>
-            <h3 className={styles.subheading}>Estimated GIF</h3>
+          <div>
+            <h3 className={styles.subheading}>Output</h3>
             <OutputDetails settings={settings} metadata={metadata} />
           </div>
         )}
@@ -97,11 +97,6 @@ export function SettingsPanel({
           </div>
         )}
         {status === 'analyzing' && <p className={styles.hint}>Reading the video…</p>}
-        {metadata && !isProcessing && (
-          <p className={styles.hint}>
-            GIF size depends heavily on the video’s content. Treat the estimate as a guide.
-          </p>
-        )}
       </div>
     </Panel>
   );

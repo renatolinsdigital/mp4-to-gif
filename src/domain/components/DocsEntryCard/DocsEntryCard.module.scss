@@ -1,0 +1,167 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.card {
+  @include helpers.card-surface;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+  min-width: 0;
+  padding: theme.$space-lg;
+  // Clears the sticky header when jumped to from a link.
+  scroll-margin-top: 6rem;
+
+  &:target {
+    box-shadow: theme.$shadow-lg;
+    outline: theme.$border-width solid theme.$color-primary;
+    outline-offset: theme.$border-width;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: theme.$space-sm;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-xl;
+  overflow-wrap: anywhere;
+}
+
+.permalink {
+  @include helpers.mono-type;
+  flex: none;
+  color: theme.$color-text-subtle;
+  font-weight: theme.$font-weight-bold;
+  text-decoration: none;
+
+  &:hover {
+    color: theme.$color-text;
+  }
+}
+
+.summary {
+  font-size: theme.$font-size-lg;
+  font-weight: theme.$font-weight-semibold;
+  line-height: 1.4;
+}
+
+.body {
+  max-width: 72ch;
+  color: theme.$color-text-muted;
+}
+
+.pairs {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xs;
+  margin-top: theme.$space-xs;
+}
+
+.pairsLabel {
+  @include helpers.label-type;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-xs;
+}
+
+.grid {
+  @include helpers.border;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+  // Each cell draws its right and bottom rule as a shadow; the outer ones are clipped under
+  // the box border, so the lines stay right at any column count and with a part-filled row.
+  overflow: hidden;
+  margin: 0;
+  background: theme.$color-surface;
+
+  div {
+    min-width: 0;
+    padding: theme.$space-xs theme.$space-sm;
+    box-shadow:
+      theme.$border-width 0 0 theme.$color-border,
+      0 theme.$border-width 0 theme.$color-border;
+  }
+
+  dt {
+    @include helpers.label-type;
+    color: theme.$color-text-muted;
+    font-size: theme.$font-size-xs;
+  }
+
+  dd {
+    @include helpers.mono-type;
+    margin: 0;
+    font-size: theme.$font-size-sm;
+    font-weight: theme.$font-weight-bold;
+    overflow-wrap: anywhere;
+  }
+}
+
+.impact {
+  background: theme.$color-surface-sunken;
+}
+
+.tip {
+  @include helpers.border(theme.$border-width-thin);
+  display: flex;
+  align-items: baseline;
+  gap: theme.$space-sm;
+  margin-top: theme.$space-xs;
+  padding: theme.$space-sm;
+  background: theme.$color-primary-soft;
+  color: theme.$color-text;
+}
+
+.tipLabel {
+  @include helpers.label-type;
+  @include helpers.inverted;
+  flex: none;
+  padding: theme.$space-3xs theme.$space-xs;
+  font-size: theme.$font-size-xs;
+}
+
+.related {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: theme.$space-xs;
+  margin-top: theme.$space-xs;
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: theme.$space-xs;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.relatedLabel {
+  @include helpers.label-type;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-xs;
+}
+
+.relatedLink {
+  @include helpers.border(theme.$border-width-thin);
+  @include helpers.press-effect;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-2xs;
+  padding: theme.$space-3xs theme.$space-xs;
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+  text-decoration: none;
+  box-shadow: theme.$shadow-sm;
+
+  &:hover {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+  }
+}

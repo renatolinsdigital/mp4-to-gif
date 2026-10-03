@@ -6,7 +6,6 @@ import {
   MIN_SECTION_LENGTH,
   buildConversionPlan,
   buildFrameTimeline,
-  estimateGifSize,
   exceedsMemoryBudget,
   maxSecondsWithinBudget,
   pickSampleTimes,
@@ -156,16 +155,6 @@ describe('quality tuning', () => {
       metadata,
     );
     expect(exact.encoding.lossyTolerance).toBe(0);
-    expect(estimateGifSize(exact)).toBeGreaterThan(estimateGifSize(preset));
-  });
-
-  test('the size estimate follows the tuning', () => {
-    const base = buildConversionPlan({ ...DEFAULT_SETTINGS, quality: 'high' }, metadata);
-    const fewerColors = buildConversionPlan(
-      { ...DEFAULT_SETTINGS, quality: 'high', tuning: { maxColors: 64 } },
-      metadata,
-    );
-    expect(estimateGifSize(fewerColors)).toBeLessThan(estimateGifSize(base));
   });
 
   test('Full HD is a width option and is never upscaled', () => {

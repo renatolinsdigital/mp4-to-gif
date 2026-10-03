@@ -1,8 +1,0 @@
-@use '@/global-styles/theme';
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: theme.$space-md;
-  margin: 0;
-}

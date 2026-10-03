@@ -44,7 +44,7 @@ async function captureThumbnail(video: HTMLVideoElement, metadata: VideoMetadata
 
 /**
  * Validates the file and reads its duration, resolution and a thumbnail. Decoding a frame
- * here (not just metadata) catches unsupported codecs at import time rather than mid-batch.
+ * here (not just metadata) catches unsupported codecs at import time rather than mid-conversion.
  */
 export async function probeVideo(file: File, sourceUrl: string): Promise<ProbeResult> {
   await assertConvertibleMp4(file);

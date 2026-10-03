@@ -11,7 +11,7 @@ test('explains the product and links to the converter', () => {
     </MemoryRouter>,
   );
   expect(screen.getByRole('heading', { level: 1, name: 'MP4 to GIF' })).toBeInTheDocument();
-  expect(screen.getByText(/sharp GIFs, up to Full HD/)).toBeInTheDocument();
+  expect(screen.getByText(/sharp, optimized GIFs, up to Full HD/)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /Open the converter/ })).toHaveAttribute(
     'href',
     '/converter',

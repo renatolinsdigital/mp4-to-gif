@@ -14,11 +14,11 @@ const baseProps = {
   onCancel: () => {},
 };
 
-test('shows the settings, the estimate and the Convert button', () => {
+test('shows the settings, the output summary and the Convert button', () => {
   const onConvert = vi.fn();
   render(<SettingsPanel {...baseProps} job={makeJob()} onConvert={onConvert} />);
   expect(screen.getByRole('group', { name: 'Preset' })).toBeInTheDocument();
-  expect(screen.getByText('Estimated GIF')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Output' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Convert to GIF' }));
   expect(onConvert).toHaveBeenCalledTimes(1);
 });

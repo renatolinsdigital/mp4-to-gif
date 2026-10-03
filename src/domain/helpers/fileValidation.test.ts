@@ -1,10 +1,25 @@
 import { describe, expect, test } from 'vitest';
 
 import { ConversionError } from './conversionErrors';
-import { MAX_FILE_SIZE_BYTES, assertConvertibleMp4, hasMp4Signature, looksLikeMp4 } from './fileValidation';
+import {
+  MAX_FILE_SIZE_BYTES,
+  assertConvertibleMp4,
+  hasMp4Signature,
+  looksLikeMp4,
+} from './fileValidation';
 
 function mp4Header(boxType = 'ftyp'): Uint8Array<ArrayBuffer> {
-  return new Uint8Array([0, 0, 0, 0x20, ...Array.from(boxType, (char) => char.charCodeAt(0)), 0x69, 0x73, 0x6f, 0x6d]);
+  return new Uint8Array([
+    0,
+    0,
+    0,
+    0x20,
+    ...Array.from(boxType, (char) => char.charCodeAt(0)),
+    0x69,
+    0x73,
+    0x6f,
+    0x6d,
+  ]);
 }
 
 describe('looksLikeMp4', () => {

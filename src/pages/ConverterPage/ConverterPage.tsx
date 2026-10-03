@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { DropZone } from '@/domain/components/DropZone';
-import { LocalProcessingNotice } from '@/domain/components/LocalProcessingNotice';
 import { ResultPanel } from '@/domain/components/ResultPanel';
 import { SettingsPanel } from '@/domain/components/SettingsPanel';
 import { SourceVideoPanel } from '@/domain/components/SourceVideoPanel';
@@ -17,10 +16,7 @@ export function ConverterPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.intro}>
-        <h1 className="visually-hidden">Converter</h1>
-        <LocalProcessingNotice />
-      </header>
+      <h1 className="visually-hidden">Converter</h1>
 
       {job ? (
         <>

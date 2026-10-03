@@ -19,7 +19,11 @@
   gap: theme.$space-2xl;
   padding-top: theme.$space-md;
 
+  // Two fixed columns on desktop so the text can't push the spec card into a far corner.
   @include responsive.desktop {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: theme.$space-3xl;
     padding-top: theme.$space-xl;
   }
 }
@@ -144,6 +148,7 @@
   border-top: theme.$border-width solid theme.$color-border;
 
   div {
+    min-width: 0;
     padding: theme.$space-xs theme.$space-sm;
 
     & + div {
@@ -160,21 +165,36 @@
   dd {
     @include helpers.mono-type;
     margin: 0;
+    font-size: clamp(theme.$font-size-sm, 1.4vw, theme.$font-size-md);
     font-weight: theme.$font-weight-bold;
+    overflow-wrap: anywhere;
   }
 }
 
+// Static strip: items spread across the width and wrap instead of clipping at the edge.
 .ticker {
   @include helpers.border;
-  overflow: hidden;
+  @include helpers.display-type;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: theme.$space-2xs theme.$space-lg;
+  margin: 0;
+  padding: theme.$space-sm theme.$space-md;
   background: theme.$color-primary;
   color: theme.$color-on-primary;
-  white-space: nowrap;
+  font-size: clamp(theme.$font-size-md, 2vw, theme.$font-size-xl);
+  list-style: none;
 
-  p {
-    @include helpers.display-type;
-    padding: theme.$space-sm 0;
-    font-size: theme.$font-size-xl;
+  li {
+    display: flex;
+    align-items: center;
+    gap: theme.$space-lg;
+    white-space: nowrap;
+  }
+
+  li + li::before {
+    content: '✶';
   }
 }
 
@@ -276,7 +296,7 @@
 
 .table {
   width: 100%;
-  min-width: 54rem;
+  min-width: 46rem;
   border-collapse: collapse;
   text-align: left;
 
@@ -311,6 +331,19 @@
   td {
     @include helpers.mono-type;
     white-space: nowrap;
+  }
+}
+
+// Column headers sit on the inverted strip, so they keep its colors and mark the link with
+// a dotted underline instead of the default link color.
+.docsLink {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.3em;
+
+  &:hover {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
   }
 }
 

@@ -32,7 +32,7 @@ export interface QualityTuning {
   lossy?: LossyLevel;
 }
 
-/** Settings chosen by the user. Applied to every queue item unless it has its own. */
+/** Settings chosen by the user, applied to the current video. */
 export interface ConversionSettings {
   quality: QualityPreset;
   tuning: QualityTuning;

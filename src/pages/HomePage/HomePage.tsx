@@ -9,14 +9,15 @@ import { DEFAULT_SETTINGS } from '@/domain/helpers/settingsSchema';
 import type { DitherMode, LossyLevel } from '@/domain/types/conversion';
 import { Icon, type IconName } from '@/shared/icons';
 import { cx } from '@/shared/helpers/cx';
-import { formatBytes } from '@/shared/helpers/formatters';
 
 import styles from './HomePage.module.scss';
 
+const TICKER_ITEMS = ['Full HD 1920×1080', 'Five presets', 'Optimized GIFs', 'Zero uploads'];
+
 const STEPS = [
   {
-    title: 'Add your videos',
-    text: 'Drop in as many MP4 files as you like, or pick them from a folder.',
+    title: 'Add your video',
+    text: 'Drop in an MP4 file, or pick one from your device.',
   },
   {
     title: 'Pick a preset',
@@ -24,7 +25,7 @@ const STEPS = [
   },
   {
     title: 'Convert & download',
-    text: 'Convert the whole batch, then download GIFs one by one or as a ZIP.',
+    text: 'Convert, check the preview, and download your GIF.',
   },
 ] as const;
 
@@ -47,11 +48,23 @@ const FEATURES: ReadonlyArray<{ icon: IconName; title: string; text: string; isN
     text: 'Videos are decoded and encoded inside your browser. Nothing is uploaded, and there is no account.',
   },
   {
-    icon: 'film',
-    title: 'Batch friendly',
-    text: 'Queue many files, watch per-file progress, and keep adding files while a batch runs.',
+    icon: 'sliders',
+    title: 'Optimized GIFs',
+    text: 'Pixels that don’t change between frames are skipped and colors are reused where it saves bytes, so each GIF stays as small as its look allows.',
   },
 ];
+
+// Each column header links to the docs entry that explains it.
+const TABLE_COLUMNS = [
+  { label: 'Preset', docsId: 'presets-overview' },
+  { label: 'Width', docsId: 'resolution' },
+  { label: 'FPS', docsId: 'frame-rate' },
+  { label: 'Colors', docsId: 'colors-per-palette' },
+  { label: 'Palette', docsId: 'palette' },
+  { label: 'Dithering', docsId: 'dithering' },
+  { label: 'Pixel skip', docsId: 'pixel-skip' },
+  { label: 'Lossy', docsId: 'lossy' },
+] as const;
 
 const DITHER_LABELS: Record<DitherMode, string> = {
   off: 'Off',
@@ -81,7 +94,7 @@ export function HomePage() {
             <span className="visually-hidden">to</span> GIF
           </h1>
           <p className={styles.lead}>
-            Turn batches of videos into sharp GIFs, up to Full HD. Pick a preset, press convert,
+            Turn videos into sharp, optimized GIFs, up to Full HD. Pick a preset, press convert,
             download. Your videos never leave your device.
           </p>
           <div className={styles.ctas}>
@@ -119,12 +132,11 @@ export function HomePage() {
         </figure>
       </section>
 
-      <div className={styles.ticker} aria-hidden="true">
-        <p>
-          Full HD 1920×1080 ✶ Five presets ✶ Batch convert ✶ Zero uploads ✶ Full HD 1920×1080 ✶ Five
-          presets ✶ Batch convert ✶ Zero uploads ✶
-        </p>
-      </div>
+      <ul className={styles.ticker} role="list" aria-hidden="true">
+        {TICKER_ITEMS.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
 
       <section aria-labelledby="how-it-works">
         <h2 id="how-it-works" className={styles.sectionTitle}>
@@ -149,32 +161,32 @@ export function HomePage() {
             Presets
           </h2>
           <p className={styles.sectionLead}>
-            Each step up is sharper and smoother, and makes bigger files. Sizes are rough figures
-            for one second of 16:9 camera footage; screen recordings come out several times smaller.
+            Each step up is sharper and smoother, and makes bigger files.{' '}
+            <Link to={{ pathname: '/docs', hash: 'presets-overview' }}>
+              What every column means
+            </Link>
           </p>
         </div>
         <div className={styles.tableBox}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th scope="col">Preset</th>
-                <th scope="col">Width</th>
-                <th scope="col">FPS</th>
-                <th scope="col">Colors</th>
-                <th scope="col">Palette</th>
-                <th scope="col">Dithering</th>
-                <th scope="col">Pixel skip</th>
-                <th scope="col">Lossy</th>
-                <th scope="col">Size per second</th>
+                {TABLE_COLUMNS.map((column) => (
+                  <th key={column.label} scope="col">
+                    <Link
+                      to={{ pathname: '/docs', hash: column.docsId }}
+                      className={styles.docsLink}
+                    >
+                      {column.label}
+                    </Link>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {QUALITY_PRESET_ORDER.map((key) => {
                 const preset = QUALITY_PRESETS[key];
                 const isDefault = key === DEFAULT_SETTINGS.quality;
-                const height = Math.round((preset.width * 9) / 16);
-                const bytesPerSecond =
-                  preset.estimatedBytesPerPixel * preset.width * height * preset.frameRate;
                 return (
                   <tr key={key} className={cx(isDefault && styles.highlightRow)}>
                     <th scope="row">
@@ -198,7 +210,6 @@ export function HomePage() {
                         : `≤ ${PIXEL_SKIP_THRESHOLDS[preset.pixelSkip]}`}
                     </td>
                     <td>{LOSSY_LABELS[preset.lossy]}</td>
-                    <td>about {formatBytes(bytesPerSecond)}</td>
                   </tr>
                 );
               })}

@@ -1,0 +1,1 @@
+export { DocsEntryCard } from './DocsEntryCard';

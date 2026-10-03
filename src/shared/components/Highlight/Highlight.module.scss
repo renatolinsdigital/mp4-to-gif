@@ -1,0 +1,7 @@
+@use '@/global-styles/theme';
+
+.mark {
+  padding: 0 0.1em;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}

@@ -196,8 +196,18 @@
   gap: theme.$space-xs;
 }
 
-.footerMark {
+.copyright {
   @include helpers.mono-type;
+  margin-left: auto;
   font-size: theme.$font-size-sm;
   font-weight: theme.$font-weight-bold;
+}
+
+// The footer is inverted, so the global link color (text on bg) would vanish here.
+.copyrightLink {
+  color: inherit;
+
+  &:hover {
+    color: theme.$color-on-primary;
+  }
 }

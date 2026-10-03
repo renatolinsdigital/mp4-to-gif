@@ -32,11 +32,10 @@ function renderPage(overrides: Partial<ConverterContextValue> = {}) {
   return value;
 }
 
-test('starts with the upload area and the local processing notice', () => {
+test('starts with the upload area', () => {
   renderPage();
   expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Converter');
   expect(screen.getByText('Drop an MP4 file here')).toBeInTheDocument();
-  expect(screen.getByText(/Nothing is uploaded/)).toBeInTheDocument();
   expect(screen.queryByRole('region', { name: 'Settings' })).not.toBeInTheDocument();
 });
 

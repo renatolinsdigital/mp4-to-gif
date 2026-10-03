@@ -1,0 +1,209 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+// Height of the sticky site header plus breathing room, for anchors and the sticky contents.
+$header-clearance: 6rem;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xl;
+
+  @include responsive.desktop {
+    gap: theme.$space-3xl;
+  }
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-lg;
+  max-width: 56rem;
+}
+
+.eyebrow {
+  @include helpers.inverted;
+  @include helpers.label-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-xs;
+  padding: theme.$space-xs theme.$space-sm;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-display;
+}
+
+.lead {
+  max-width: 52ch;
+  font-size: clamp(theme.$font-size-lg, 2vw, theme.$font-size-xl);
+  font-weight: theme.$font-weight-medium;
+  line-height: 1.45;
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+  align-self: stretch;
+}
+
+.status {
+  @include helpers.meta-text;
+  font-weight: theme.$font-weight-bold;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xl;
+
+  @include responsive.desktop {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    align-items: start;
+    gap: theme.$space-2xl;
+  }
+}
+
+// Mobile: a compact box above the content. Desktop: a sticky column that scrolls on its own.
+.toc {
+  @include helpers.card-surface;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-md;
+  padding: theme.$space-md;
+
+  @include responsive.mobile-only {
+    max-height: 18rem;
+    overflow-y: auto;
+  }
+
+  @include responsive.desktop {
+    position: sticky;
+    top: $header-clearance;
+    max-height: calc(100vh - #{$header-clearance} - #{theme.$space-lg});
+    overflow-y: auto;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.tocGroup {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-2xs;
+}
+
+.tocSection {
+  @include helpers.label-type;
+  display: flex;
+  gap: theme.$space-xs;
+  color: theme.$color-text;
+  text-decoration: none;
+
+  span {
+    @include helpers.mono-type;
+    color: theme.$color-text-muted;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tocLink {
+  display: block;
+  padding: theme.$space-3xs theme.$space-xs;
+  border-left: theme.$border-width-thin solid theme.$color-border;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-semibold;
+  text-decoration: none;
+
+  &:hover {
+    border-left-color: theme.$color-primary;
+    background: theme.$color-primary-soft;
+    color: theme.$color-text;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-3xl;
+  min-width: 0;
+  max-width: 56rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-lg;
+  scroll-margin-top: $header-clearance;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  gap: theme.$space-md;
+}
+
+.sectionNumber {
+  @include helpers.display-type;
+  flex: none;
+  color: transparent;
+  font-size: theme.$font-size-display-sm;
+  -webkit-text-stroke: theme.$border-width-thin theme.$color-text;
+}
+
+.sectionTitle {
+  @include helpers.display-type;
+  font-size: theme.$font-size-display-sm;
+}
+
+.sectionIntro {
+  margin-top: theme.$space-xs;
+  color: theme.$color-text-muted;
+}
+
+.empty {
+  @include helpers.card-surface;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-md;
+  max-width: 56rem;
+  padding: theme.$space-xl;
+
+  p {
+    color: theme.$color-text-muted;
+  }
+}
+
+.emptyTitle {
+  @include helpers.display-type;
+  font-size: theme.$font-size-2xl;
+  overflow-wrap: anywhere;
+}
+
+.clearButton {
+  @include helpers.border;
+  @include helpers.label-type;
+  @include helpers.press-effect;
+  min-height: theme.$touch-target;
+  padding: 0 theme.$space-md;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  box-shadow: theme.$shadow-sm;
+  cursor: pointer;
+}

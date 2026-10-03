@@ -1,8 +1,4 @@
-import {
-  QUALITY_PRESETS,
-  encodingSizeFactor,
-  resolveEncoding,
-} from '@/domain/helpers/qualityPresets';
+import { QUALITY_PRESETS, resolveEncoding } from '@/domain/helpers/qualityPresets';
 import type {
   ConversionPlan,
   ConversionSettings,
@@ -124,15 +120,4 @@ export function pickSampleTimes(times: number[], count: number): number[] {
   if (times.length <= count) return [...times];
   const step = (times.length - 1) / (count - 1);
   return Array.from({ length: count }, (_, i) => times[Math.round(i * step)] as number);
-}
-
-/** Rough output size. GIF size depends heavily on content, so this is only a guide. */
-export function estimateGifSize(plan: ConversionPlan): number {
-  const { width, height } = plan.output;
-  const preset = QUALITY_PRESETS[plan.quality];
-  // Tuning scales the preset's rate by how much bigger or smaller its settings make files.
-  const bytesPerPixel =
-    (preset.estimatedBytesPerPixel * encodingSizeFactor(plan.encoding)) /
-    encodingSizeFactor(resolveEncoding(plan.quality));
-  return Math.round(width * height * plan.frameTimes.length * bytesPerPixel);
 }

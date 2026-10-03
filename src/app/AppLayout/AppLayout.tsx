@@ -10,6 +10,7 @@ import styles from './AppLayout.module.scss';
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true },
   { to: '/converter', label: 'Converter', end: false },
+  { to: '/docs', label: 'Docs', end: false },
   { to: '/about', label: 'About', end: false },
 ] as const;
 
@@ -85,8 +86,16 @@ export function AppLayout() {
           <p className={styles.footerNote}>
             <Icon name="lock" size={16} /> Files are processed in your browser and never uploaded
           </p>
-          <p className={styles.footerMark} aria-hidden="true">
-            MP4→GIF
+          <p className={styles.copyright}>
+            ©{' '}
+            <a
+              className={styles.copyrightLink}
+              href="https://www.linkedin.com/in/renatolinsdigital"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Renato Lins<span className="visually-hidden"> (opens LinkedIn in a new tab)</span>
+            </a>
           </p>
         </div>
       </footer>

@@ -1,0 +1,61 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-md;
+  max-width: 48rem;
+  padding: theme.$space-2xl 0;
+}
+
+.eyebrow {
+  @include helpers.label-type;
+  padding: theme.$space-xs theme.$space-sm;
+  background: theme.$color-error;
+  color: theme.$color-on-status;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-display;
+}
+
+.text {
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-lg;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: theme.$space-md;
+  margin-top: theme.$space-xs;
+}
+
+.homeLink {
+  @include helpers.label-type;
+}
+
+.details {
+  @include helpers.card-surface;
+  align-self: stretch;
+  min-width: 0;
+  padding: theme.$space-sm theme.$space-md;
+
+  summary {
+    @include helpers.label-type;
+    cursor: pointer;
+  }
+
+  pre {
+    @include helpers.mono-type;
+    margin-top: theme.$space-sm;
+    overflow-x: auto;
+    font-size: theme.$font-size-sm;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}

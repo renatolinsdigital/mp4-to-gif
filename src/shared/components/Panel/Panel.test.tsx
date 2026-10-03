@@ -6,11 +6,11 @@ import { Panel } from './Panel';
 test('renders a region labelled by its title, with actions and content', () => {
   render(
     <Panel title="Files" actions={<button type="button">Clear all</button>}>
-      <p>Queue content</p>
+      <p>Panel content</p>
     </Panel>,
   );
 
   const region = screen.getByRole('region', { name: 'Files' });
-  expect(region).toHaveTextContent('Queue content');
+  expect(region).toHaveTextContent('Panel content');
   expect(screen.getByRole('button', { name: 'Clear all' })).toBeInTheDocument();
 });

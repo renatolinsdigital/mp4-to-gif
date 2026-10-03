@@ -26,12 +26,6 @@ export interface QualityPresetConfig {
   dither: DitherMode;
   pixelSkip: PixelSkipLevel;
   lossy: LossyLevel;
-  /**
-   * Rough bytes per output pixel per frame, used only for the size estimate. Measured on
-   * handheld camera footage, about the costliest content for GIF; screen recordings and
-   * animation usually come out several times smaller.
-   */
-  estimatedBytesPerPixel: number;
 }
 
 export const QUALITY_PRESET_ORDER: readonly QualityPreset[] = [
@@ -55,7 +49,6 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
     dither: 'ordered',
     pixelSkip: 'strong',
     lossy: 'strong',
-    estimatedBytesPerPixel: 0.09,
   },
   medium: {
     label: 'Standard',
@@ -69,7 +62,6 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
     dither: 'ordered',
     pixelSkip: 'medium',
     lossy: 'medium',
-    estimatedBytesPerPixel: 0.15,
   },
   high: {
     label: 'Smooth',
@@ -83,7 +75,6 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
     dither: 'ordered',
     pixelSkip: 'light',
     lossy: 'light',
-    estimatedBytesPerPixel: 0.18,
   },
   veryHigh: {
     label: 'HD',
@@ -97,7 +88,6 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
     dither: 'ordered',
     pixelSkip: 'off',
     lossy: 'medium',
-    estimatedBytesPerPixel: 0.2,
   },
   ultra: {
     label: 'Full HD',
@@ -111,7 +101,6 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualityPresetConfig> = {
     dither: 'diffusion',
     pixelSkip: 'off',
     lossy: 'light',
-    estimatedBytesPerPixel: 0.25,
   },
 };
 
@@ -190,24 +179,5 @@ export function isTuned(quality: QualityPreset, tuning: QualityTuning): boolean 
     (tuning.paletteMode !== undefined && tuning.paletteMode !== preset.paletteMode) ||
     (tuning.pixelSkip !== undefined && tuning.pixelSkip !== preset.pixelSkip) ||
     (tuning.lossy !== undefined && tuning.lossy !== preset.lossy)
-  );
-}
-
-const COLOR_SIZE_FACTOR: Record<PaletteSize, number> = { 64: 0.6, 128: 0.8, 256: 1 };
-const DITHER_SIZE_FACTOR: Record<DitherMode, number> = { off: 1, ordered: 1.15, diffusion: 1.3 };
-const PALETTE_SIZE_FACTOR: Record<PaletteMode, number> = { global: 0.85, perFrame: 1 };
-
-/** Measured: lossy matching saves the most on dithered and noisy footage, little on flat color. */
-const lossySizeFactor = (tolerance: number) => 1 / (1 + tolerance / 40);
-
-/** Relative file size of a parameter set. Only meaningful as a ratio between two sets. */
-export function encodingSizeFactor(
-  encoding: Pick<EncodingParams, 'maxColors' | 'dither' | 'paletteMode' | 'lossyTolerance'>,
-): number {
-  return (
-    COLOR_SIZE_FACTOR[encoding.maxColors] *
-    DITHER_SIZE_FACTOR[encoding.dither] *
-    PALETTE_SIZE_FACTOR[encoding.paletteMode] *
-    lossySizeFactor(encoding.lossyTolerance)
   );
 }

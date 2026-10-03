@@ -1,0 +1,91 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-xs;
+  min-width: 0;
+}
+
+.label {
+  @include helpers.label-type;
+}
+
+.control {
+  @include helpers.border;
+  display: flex;
+  align-items: center;
+  gap: theme.$space-sm;
+  padding: 0 theme.$space-md;
+  background: theme.$color-surface;
+  box-shadow: theme.$shadow-md;
+  transition: background-color theme.$duration-fast theme.$easing-standard;
+
+  &:hover {
+    background: theme.$color-primary-soft;
+  }
+
+  &:focus-within {
+    @include helpers.focus-ring;
+    background: theme.$color-surface;
+  }
+}
+
+.icon {
+  flex: none;
+}
+
+.input {
+  @include helpers.mono-type;
+  flex: 1;
+  min-width: 0;
+  min-height: 3.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: theme.$font-size-lg;
+  font-weight: theme.$font-weight-semibold;
+
+  &::placeholder {
+    color: theme.$color-text-subtle;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  // The clear button below replaces the browser's own.
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
+
+.clear {
+  @include helpers.border(theme.$border-width-thin);
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: theme.$color-surface;
+  color: theme.$color-text;
+  cursor: pointer;
+
+  &:hover {
+    background: theme.$color-primary;
+    color: theme.$color-on-primary;
+  }
+}
+
+.shortcut {
+  @include helpers.border(theme.$border-width-thin);
+  @include helpers.mono-type;
+  flex: none;
+  padding: 0 theme.$space-xs;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-sm;
+  font-weight: theme.$font-weight-bold;
+}

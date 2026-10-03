@@ -1,7 +1,7 @@
-import { buildConversionPlan, estimateGifSize } from '@/domain/helpers/conversionPlan';
+import { buildConversionPlan } from '@/domain/helpers/conversionPlan';
 import { QUALITY_PRESETS, isPresetAdjusted } from '@/domain/helpers/qualityPresets';
 import type { ConversionSettings, VideoMetadata } from '@/domain/types/conversion';
-import { formatBytes, formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
+import { formatDimensions, formatSeconds } from '@/shared/helpers/formatters';
 
 import styles from './OutputDetails.module.scss';
 
@@ -26,7 +26,6 @@ export function OutputDetails({ settings, metadata }: OutputDetailsProps) {
       `${QUALITY_PRESETS[settings.quality].label}${isPresetAdjusted(settings) ? ' (adjusted)' : ''}`,
     ],
     ['Loop', settings.loop === 'infinite' ? 'Infinite' : 'Once'],
-    ['Estimated size', `about ${formatBytes(estimateGifSize(plan))}`],
   ];
 
   return (

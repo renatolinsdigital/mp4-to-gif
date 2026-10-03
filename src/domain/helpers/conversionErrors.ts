@@ -12,7 +12,8 @@ export const CONVERSION_ERROR_MESSAGES: Record<ConversionErrorCode, string> = {
   corrupted: 'The video looks corrupted or incomplete and could not be read.',
   'unsupported-encoding':
     "This MP4 uses a video encoding your browser can't decode (for example HEVC/H.265 in some browsers). Try re-exporting it as H.264.",
-  'conversion-failed': 'Something went wrong while creating the GIF. Try again or use lower settings.',
+  'conversion-failed':
+    'Something went wrong while creating the GIF. Try again or use lower settings.',
   'file-too-large': 'This file is larger than the 2 GB limit for in-browser conversion.',
   'insufficient-memory':
     'Not enough memory to build this GIF. Try a smaller width, a lower frame rate, or a shorter section.',
