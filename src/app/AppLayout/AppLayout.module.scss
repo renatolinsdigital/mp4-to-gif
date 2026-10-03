@@ -132,6 +132,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: theme.$space-2xs;
   min-height: theme.$touch-target;
   padding: 0 theme.$space-xs;
   border: theme.$border-width solid transparent;
@@ -155,7 +156,8 @@
   border-color: theme.$color-border;
 }
 
-.themeToggle {
+.themeToggle,
+.donateShortcut {
   @include helpers.border;
   display: grid;
   place-items: center;
@@ -169,6 +171,26 @@
   &:hover {
     background: theme.$color-primary;
     color: theme.$color-on-primary;
+  }
+}
+
+// Mobile only: sits at the end of the brand row. From tablet up the nav item takes over.
+.donateShortcut {
+  margin-left: auto;
+
+  &.active,
+  &.active:hover {
+    @include helpers.inverted;
+  }
+
+  @include responsive.tablet {
+    display: none;
+  }
+}
+
+.donateNavItem {
+  @include responsive.mobile-only {
+    display: none;
   }
 }
 

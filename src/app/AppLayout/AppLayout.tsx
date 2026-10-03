@@ -13,6 +13,10 @@ const NAV_ITEMS = [
   { to: '/docs', label: 'Docs', end: false },
 ] as const;
 
+function navLinkClass({ isActive }: { isActive: boolean }) {
+  return cx(styles.navLink, isActive && styles.active);
+}
+
 export function AppLayout() {
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
@@ -45,20 +49,31 @@ export function AppLayout() {
               MP4→GIF
             </span>
           </NavLink>
+          {/* The mobile nav row has no room for a fourth link, so on mobile Donate is this
+              icon in the brand row instead. Only one of the two is ever displayed. */}
+          <NavLink
+            to="/donate"
+            className={({ isActive }) => cx(styles.donateShortcut, isActive && styles.active)}
+            aria-label="Donate"
+            title="Donate"
+          >
+            <Icon name="heart" size={20} />
+          </NavLink>
           <div className={styles.headerEnd}>
             <nav aria-label="Main" className={styles.navWrapper}>
               <ul className={styles.nav} role="list">
                 {NAV_ITEMS.map((item) => (
                   <li key={item.to} className={styles.navItem}>
-                    <NavLink
-                      to={item.to}
-                      end={item.end}
-                      className={({ isActive }) => cx(styles.navLink, isActive && styles.active)}
-                    >
+                    <NavLink to={item.to} end={item.end} className={navLinkClass}>
                       {item.label}
                     </NavLink>
                   </li>
                 ))}
+                <li className={cx(styles.navItem, styles.donateNavItem)}>
+                  <NavLink to="/donate" className={navLinkClass}>
+                    <Icon name="heart" size={18} /> Donate
+                  </NavLink>
+                </li>
               </ul>
             </nav>
             <button

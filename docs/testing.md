@@ -41,9 +41,9 @@ Test names read as sentences that state a behavior, for example "a frame identic
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Planning       | Aspect ratio, never upscaling, section clamping, delays that add up exactly, speed, the memory budget                                                                                     |
 | Encoder        | Compression round trips at every input length, lossy tolerance and error balancing, palette rebuilds, changed rectangles, merged frames, no ghosts, Lanczos on flat colors and hard edges |
-| Domain helpers | File signature checks, error mapping, file naming, reducer transitions, docs search ranking                                                                                               |
+| Domain helpers | File signature checks, error mapping, file naming, reducer transitions, docs search ranking, donation amount parsing and the PayPal link                                                  |
 | Components     | Every shared and domain component renders and responds to interaction                                                                                                                     |
-| Pages          | Home, Converter, Docs, Not Found, and the route error page                                                                                                                                |
+| Pages          | Home, Converter, Docs, Donate, Not Found, and the route error page                                                                                                                        |
 | Hooks          | Theme and keyboard shortcut hooks                                                                                                                                                         |
 
 ## Testing the encoder

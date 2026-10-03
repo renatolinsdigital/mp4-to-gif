@@ -28,7 +28,7 @@ These ship to the browser.
 | ------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
 | `react`, `react-dom`                  | ^19.3.0 | Rendering                                                                                              |
 | `react-router`                        | ^8.4.0  | `createBrowserRouter`, lazy routes, error boundaries, `NavLink`, and search params for the docs search |
-| `zod`                                 | ^4.6.5  | Validating typed input: the custom width and the section start and end (`settingsSchema.ts`)           |
+| `zod`                                 | ^4.6.5  | Validating typed input: the custom width, the section start and end, and the donation amount           |
 | `gifenc`                              | ^1.0.3  | `quantize()` only, to build each palette                                                               |
 | `@fontsource-variable/archivo`        | ^5.3.0  | Body and display font, including its width axis for the expanded headings                              |
 | `@fontsource-variable/jetbrains-mono` | ^5.3.0  | Monospace font for numbers and technical values                                                        |

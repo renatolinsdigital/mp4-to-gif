@@ -1,0 +1,168 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-3xl;
+
+  @include responsive.desktop {
+    gap: theme.$space-4xl;
+  }
+}
+
+// Stacked up to desktop, where the pitch and the donation card sit side by side.
+.hero {
+  display: grid;
+  gap: theme.$space-2xl;
+  padding-top: theme.$space-md;
+
+  @include responsive.desktop {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 32rem);
+    align-items: center;
+    padding-top: theme.$space-xl;
+  }
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: theme.$space-lg;
+  min-width: 0;
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  line-height: 0.95;
+}
+
+// "Free" as a tilted sticker in the accent color.
+.sticker {
+  @include helpers.border;
+  display: inline-block;
+  margin-top: theme.$space-xs;
+  padding: 0.06em 0.14em 0.04em;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  box-shadow: theme.$shadow-md;
+  transform: rotate(-3deg);
+}
+
+.lead {
+  max-width: 42ch;
+  font-size: clamp(theme.$font-size-lg, 2vw, theme.$font-size-2xl);
+  font-weight: theme.$font-weight-medium;
+  line-height: 1.45;
+}
+
+.promises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: theme.$space-sm;
+  margin: 0;
+
+  li {
+    @include helpers.border;
+    @include helpers.label-type;
+    display: inline-flex;
+    align-items: center;
+    gap: theme.$space-xs;
+    padding: theme.$space-xs theme.$space-sm;
+    background: theme.$color-surface;
+    box-shadow: theme.$shadow-sm;
+  }
+}
+
+.sectionTitle {
+  @include helpers.display-type;
+  margin-bottom: theme.$space-lg;
+  font-size: theme.$font-size-display-sm;
+}
+
+.areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: theme.$space-lg;
+  margin: 0;
+}
+
+.area {
+  @include helpers.card-surface;
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-sm;
+  padding: theme.$space-lg;
+
+  h3 {
+    @include helpers.display-type;
+    font-size: theme.$font-size-xl;
+  }
+
+  p {
+    color: theme.$color-text-muted;
+  }
+}
+
+.areaIcon {
+  @include helpers.border;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+}
+
+.thanks {
+  @include helpers.border;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-lg theme.$space-xl;
+  padding: theme.$space-lg;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  box-shadow: theme.$shadow-lg;
+
+  @include responsive.tablet {
+    padding: theme.$space-xl theme.$space-2xl;
+  }
+}
+
+// The tight display tracking closes up the gap after the K, so "Thank you" read as one word.
+.thanksTitle {
+  @include helpers.display-type;
+  font-size: theme.$font-size-display-sm;
+  word-spacing: 0.12em;
+}
+
+.thanksText {
+  max-width: 40ch;
+  margin-top: theme.$space-xs;
+  font-size: theme.$font-size-lg;
+  font-weight: theme.$font-weight-medium;
+}
+
+// Fixed dark-on-light colors: the banner is yellow in both themes, so the theme's inverted
+// pair would turn into light-on-yellow in dark mode.
+.thanksLink,
+.thanksLink:hover {
+  background: theme.$color-on-primary;
+  color: theme.$color-primary;
+}
+
+.thanksLink {
+  @include helpers.label-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-sm;
+  min-height: 3.5rem;
+  padding: 0 theme.$space-lg;
+  border: theme.$border-width solid theme.$color-on-primary;
+  font-size: theme.$font-size-md;
+  text-decoration: none;
+}

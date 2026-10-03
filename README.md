@@ -98,7 +98,7 @@ Why each piece is there, and what was left out on purpose, is in [docs/stack.md]
 src/
   app/            App shell: providers and layout
   routes/         Router with lazy-loaded pages
-  pages/          Home, Converter, Docs, Not Found, route error page
+  pages/          Home, Converter, Docs, Donate, Not Found, route error page
   domain/         Everything specific to video and GIF
     components/   Drop zone, settings, result panel, and more
     hooks/        Conversion state machine, docs search
@@ -141,6 +141,18 @@ When a change affects more than one of these, update them in the same pull reque
 ## Privacy
 
 Files are read, converted, and downloaded on your device. There's no backend, no analytics, and no network request involving your video. Closing or reloading the tab discards everything that wasn't downloaded.
+
+## Support the project
+
+MP4 to GIF is free, with no ads and no sign-up. If it saved you some time, a donation helps pay for bug fixes, keeping up with browser changes, and better presets.
+
+- **In the app:** open the `/donate` page, pick a suggested amount or type your own, and confirm it on paypal.com.
+- **On PayPal's website:** [donate with PayPal](https://www.paypal.com/donate/?business=renato.digital.crafts%40gmail.com&currency_code=USD&item_name=Support+for+the+MP4+to+GIF+converter) and enter any amount.
+- **In the PayPal app:** send it to `renato.digital.crafts@gmail.com`.
+
+Donations are in US dollars and handled entirely by PayPal. The app only links there, so it never sees your payment details and makes no request to PayPal until you click. How the link is built is in [docs/architecture.md](docs/architecture.md#donations).
+
+Can't donate? Sharing the converter with a friend helps too.
 
 ## License
 

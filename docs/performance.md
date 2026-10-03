@@ -91,14 +91,17 @@ Measured with `npm run build` on 2026-10-03:
 
 | Chunk                                                                     | Size     | Gzip     |
 | ------------------------------------------------------------------------- | -------- | -------- |
-| `index`: the entry chunk (React, React DOM, React Router, Zod, app shell) | 396.5 kB | 125.4 kB |
+| `index`: the entry chunk (React, React DOM, React Router, Zod, app shell) | 397.7 kB | 125.7 kB |
 | `DocsPage`                                                                | 30.3 kB  | 11.5 kB  |
 | `gifEncoder.worker`                                                       | 22.6 kB  | n/a      |
-| `ConverterPage`                                                           | 22.2 kB  | 7.4 kB   |
+| `ConverterPage`                                                           | 20.0 kB  | 6.8 kB   |
+| `DonatePage`, including the PayPal logo artwork                           | 11.8 kB  | 5.1 kB   |
 | `jsx-runtime`                                                             | 8.8 kB   | 3.3 kB   |
 | `HomePage`                                                                | 6.2 kB   | 2.1 kB   |
+| `TextField`, shared by the converter and donate pages                     | 2.4 kB   | 1.0 kB   |
+| `formatters`, shared by the converter and docs pages                      | 0.7 kB   | 0.4 kB   |
 | `NotFoundPage`                                                            | 0.4 kB   | 0.3 kB   |
-| CSS, all chunks                                                           | 59.6 kB  | 14.3 kB  |
+| CSS, all chunks                                                           | 67.0 kB  | 16.6 kB  |
 | Fonts, all subsets (WOFF2)                                                | 295 kB   | n/a      |
 
 CSS is Cascading Style Sheets. WOFF2 is Web Open Font Format 2, which is already compressed. Vite doesn't report gzip sizes for the worker or the fonts.
@@ -109,10 +112,11 @@ Worth knowing:
 - **The worker downloads on first use.** It's fetched when the first conversion creates it, not on page load.
 - **Fonts download by subset.** Each font file covers a character range, and browsers only fetch the ranges a page uses, usually the two Latin files (130.5 kB together).
 - **Pages are lazy.** Visiting Home doesn't download the converter or the docs content.
+- **Anything the app shell can reach lands in `index`,** even when only one lazy page uses it. Two cases so far, both from the donate page. `PayPalLogo` isn't exported from the `@/shared/icons` barrel, because the header imports that barrel, and the logo artwork would load on every page (about 5 kB). The donation amount schema avoids `z.string()`, which would pull every Zod string format (email, web address, unique ID, and more) into `index` (about 17 kB). After adding an export to a barrel or a new kind of Zod schema, check that `index` didn't grow.
 
 ## Test suite speed
 
-On 2026-10-03, `npm test` ran 222 tests in 42 files in about 5.7 seconds. Vitest reported that creating the jsdom environment took about 62% of tracked time, since it's created once per test file. Vitest suggests `pool: 'vmThreads'` or `isolate: false` to reduce that. Neither is enabled. Both change how test files are isolated from each other, so measure and check for leaking state before adopting one.
+On 2026-10-03, `npm test` ran 244 tests in 45 files in about 5.9 seconds. Vitest reported that creating the jsdom environment took about 66% of tracked time, since it's created once per test file. Vitest suggests `pool: 'vmThreads'` or `isolate: false` to reduce that. Neither is enabled. Both change how test files are isolated from each other, so measure and check for leaking state before adopting one.
 
 ## How to measure
 

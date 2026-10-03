@@ -22,7 +22,10 @@ const ICON_PATHS = {
   moon: 'M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z',
   chevronDown: 'M6 9l6 6 6-6',
   monitor: 'M2 4h20v13H2zM8 21h8M12 17v4',
-  search: 'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 21 21',} as const;
+  search: 'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 21 21',
+  heart: 'M12 20 3.5 11.5a4.5 4.5 0 0 1 6.4-6.4L12 7.2l2.1-2.1a4.5 4.5 0 0 1 6.4 6.4z',
+  copy: 'M9 9h11v11H9zM5 15H4V4h11v1',
+} as const;
 
 export type IconName = keyof typeof ICON_PATHS;
 

@@ -1,0 +1,130 @@
+@use '@/global-styles/theme';
+@use '@/global-styles/helpers';
+@use '@/global-styles/responsive-mixins' as responsive;
+
+.card {
+  @include helpers.card-surface(theme.$shadow-lg);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header {
+  @include helpers.inverted;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-xs;
+  padding: theme.$space-sm theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-sm theme.$space-lg;
+  }
+}
+
+.title {
+  @include helpers.display-type;
+  font-size: theme.$font-size-xl;
+}
+
+.secure {
+  @include helpers.label-type;
+  display: inline-flex;
+  align-items: center;
+  gap: theme.$space-2xs;
+  font-size: theme.$font-size-xs;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$space-lg;
+  padding: theme.$space-lg theme.$space-md;
+
+  @include responsive.tablet {
+    padding: theme.$space-lg;
+  }
+}
+
+// The PayPal logo keeps its brand colors, so the button stays yellow in both themes.
+.donate {
+  @include helpers.border;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: theme.$space-xs theme.$space-sm;
+  min-height: 4.25rem;
+  padding: theme.$space-sm theme.$space-md;
+  background: theme.$color-primary;
+  color: theme.$color-on-primary;
+  font-size: theme.$font-size-md;
+  font-weight: theme.$font-weight-extrabold;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: theme.$shadow-md;
+  @include helpers.press-effect(theme.$shadow-offset-md);
+
+  // Smaller on mobile so "Donate $5 with PayPal" fits on one line from 390px wide. Narrower
+  // phones wrap the logo under the text, which the centered wrap layout handles.
+  @include responsive.tablet {
+    padding: theme.$space-sm theme.$space-lg;
+    font-size: theme.$font-size-lg;
+  }
+
+  &:hover {
+    background: theme.$color-primary-hover;
+    color: theme.$color-on-primary;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+  }
+}
+
+.logo {
+  flex: none;
+}
+
+.fineprint {
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-sm;
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: theme.$space-sm;
+  padding: theme.$space-md;
+  border-top: theme.$border-width solid theme.$color-border;
+  background: theme.$color-surface-sunken;
+
+  @include responsive.tablet {
+    padding: theme.$space-md theme.$space-lg;
+  }
+}
+
+.recipient {
+  min-width: 0;
+}
+
+.recipientLabel {
+  @include helpers.label-type;
+  color: theme.$color-text-muted;
+  font-size: theme.$font-size-xs;
+}
+
+.email {
+  @include helpers.mono-type;
+  font-weight: theme.$font-weight-bold;
+  overflow-wrap: anywhere;
+}

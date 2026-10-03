@@ -66,6 +66,28 @@
   --option-min: 3.25rem;
 }
 
+.large {
+  --option-min: 4.5rem;
+
+  .legend {
+    margin-bottom: theme.$space-xs;
+    font-size: theme.$font-size-sm;
+  }
+
+  .option {
+    gap: theme.$space-2xs;
+    min-height: 4.75rem;
+    padding: theme.$space-xs;
+    font-size: theme.$font-size-xl;
+    font-stretch: theme.$font-stretch-display;
+    font-weight: theme.$font-weight-black;
+  }
+
+  .hint {
+    font-size: theme.$font-size-xs;
+  }
+}
+
 .hint {
   @include helpers.mono-type;
   color: theme.$color-text-muted;

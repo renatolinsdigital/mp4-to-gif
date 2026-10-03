@@ -19,6 +19,8 @@ interface SegmentedControlProps<T extends string> {
   disabled?: boolean;
   /** Narrower options, for short labels like frame rates. */
   compact?: boolean;
+  /** Taller options with display-size labels, for a few prominent choices like amounts. */
+  large?: boolean;
 }
 
 /** Radio group styled as connected buttons. Arrow keys move between options natively. */
@@ -29,10 +31,14 @@ export function SegmentedControl<T extends string>({
   onChange,
   disabled = false,
   compact = false,
+  large = false,
 }: SegmentedControlProps<T>) {
   const name = useId();
   return (
-    <fieldset className={cx(styles.fieldset, compact && styles.compact)} disabled={disabled}>
+    <fieldset
+      className={cx(styles.fieldset, compact && styles.compact, large && styles.large)}
+      disabled={disabled}
+    >
       <legend className={styles.legend}>{legend}</legend>
       <div className={styles.group}>
         {options.map((option) => (

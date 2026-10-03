@@ -34,15 +34,15 @@ src/
   main.tsx              Entry point: fonts, global styles, React root
   app/                  App shell: providers and the page layout (header, nav, footer)
   routes/               Central router with lazy-loaded pages
-  pages/                One folder per route: Home, Converter, Docs, NotFound, RouteError
+  pages/                One folder per route: Home, Converter, Docs, Donate, NotFound, RouteError
   domain/               Everything specific to turning video into GIFs
-    components/         Domain UI: drop zone, settings form, result panel, docs entry card
-    hooks/              useGifConverter (conversion state machine), useConverter, useDocsSearch
+    components/         Domain UI: drop zone, settings form, result panel, docs entry card, donation card
+    hooks/              useGifConverter (conversion state machine), useConverter, useDocsSearch, useDonationAmount
     services/
       video/            Probing and frame capture with a hidden <video> element
       gif/              Worker, worker client, protocol, encoding session, GIF writer, LZW
       gifConversion.service.ts   Orchestrates capture and encoding for one GIF
-    helpers/            Presets, conversion plan, pixel mapping, resampling, errors, docs content
+    helpers/            Presets, conversion plan, pixel mapping, resampling, errors, docs content, donation
     types/              Settings, plan, job, and docs types
   shared/               Generic building blocks with no knowledge of video or GIFs
     components/         Button, Modal, Toast, Slider, SegmentedControl, TextField, and others
@@ -193,7 +193,7 @@ Where errors appear:
 
 ## Routing
 
-- `createBrowserRouter` with four lazy-loaded routes: `/`, `/converter`, `/docs`, and a catch-all not found page. Each page downloads only when first visited.
+- `createBrowserRouter` with five lazy-loaded routes: `/`, `/converter`, `/docs`, `/donate`, and a catch-all not found page. Each page downloads only when first visited.
 - Two error boundaries. A pathless route inside the layout catches page errors and shows them with the header and navigation still working. A second boundary on the layout itself catches errors in the shell.
 - `RouteErrorPage` is imported eagerly, because it has to render when a lazy page chunk is what failed to load.
 - On each navigation after the first render, `AppLayout` moves focus to `<main>` and scrolls to the top, as a full page load would.
@@ -211,3 +211,14 @@ Where errors appear:
 The `/docs` page is data, not markup. `docsContent.ts` exports sections and entries, and every number in them (preset values, thresholds, tolerances, size limits, how many seconds fit in memory) is read from the constants the encoder uses. Changing a preset updates the Home page table and the docs with no extra edits.
 
 The search query lives in the URL (`/docs?q=dither`), so a search can be shared or bookmarked.
+
+## Donations
+
+The `/donate` page sends donors to PayPal with a plain link, not PayPal's JavaScript software development kit. `buildPayPalDonateUrl` in `donation.ts` points at PayPal's hosted donate page and fills in the recipient's email (`business`), the amount, and the currency. A personal PayPal account has no hosted button ID, so the email is how that page identifies the recipient.
+
+A link keeps two things true that the rest of the app relies on. The app makes no third-party requests until the donor clicks, and payment details never touch this site. PayPal handles the payment in a new tab.
+
+- The presets, the minimum and maximum, and the recipient email are constants at the top of `donation.ts`.
+- `useDonationAmount` tracks the chosen preset or typed amount and builds the link. The donate button stays disabled until the amount is valid.
+- A typed amount goes through a Zod schema that also accepts a comma as the decimal mark ("7,50"). Its error appears only after the field loses focus, so a half-typed amount isn't flagged.
+- On mobile the header has no room for a fourth nav link, so Donate is a heart icon next to the logo there, and a nav item from tablet up.

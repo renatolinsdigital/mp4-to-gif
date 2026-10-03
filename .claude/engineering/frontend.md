@@ -93,6 +93,7 @@ Business logic is isolated in custom hooks (see `react.md`). Pages stay declarat
 - `/` → Home. Explains the project clearly.
 - `/converter` (or equivalent primary feature route) → the main functional page.
 - `/docs` → searchable reference for presets and settings.
+- `/donate` → asks for support and links to PayPal's hosted donate page.
 
 Each page is a component inside `/pages`, mapped through a central router file, with smooth transitions between routes. Routes are lazy-loaded (see `performance.md`).
 
